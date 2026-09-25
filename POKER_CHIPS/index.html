@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Educational Poker Chip Simulator no real money included</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/script.js" defer></script>
+</head>
+
+<body>
+
+    <!-- SETUP SCREEN -->
+    <section id="setupScreen" class="screen">
+        <div class="setup-container">
+
+            <h1>BSIT Poker kay Bro Calculator</h1>
+
+            <p class="subtitle">
+                Manage your poker chips without physical chips.
+            </p>
+
+            <div class="setup-card">
+
+                <label for="playerCount">
+                    Number of Players
+                </label>
+
+                <select id="playerCount">
+                    <option value="2">2 Players</option>
+                    <option value="3">3 Players</option>
+                    <option value="4" selected>4 Players</option>
+                    <option value="5">5 Players</option>
+                    <option value="6">6 Players</option>
+                    <option value="7">7 Players</option>
+                    <option value="8">8 Players</option>
+                </select>
+
+                <label for="startingChips">
+                    Starting Chips
+                </label>
+
+                <input 
+                    type="number"
+                    id="startingChips"
+                    value="1000"
+                    min="1"
+                >
+
+                <div id="playerNames"></div>
+
+
+                <button id="startGameButton" class="primary-button">
+                    Start Game
+                </button>
+
+                <button id="continueGameButton" class="secondary-button hidden">
+                    Continue Saved Game
+                </button>
+
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- GAME SCREEN -->
+    <section id="gameScreen" class="screen hidden">
+
+        <header class="game-header">
+
+            <div>
+                <h1>BSIT Poker kay Bro Simulator</h1>
+
+                <p>
+                    Virtual Chip Manager
+                </p>
+            </div>
+
+            <button id="newGameButton" class="danger-button">
+                New Game
+            </button>
+
+        </header>
+
+
+        <!-- GAME INFORMATION -->
+        <section class="game-info">
+
+            <div class="info-card">
+                <span>Pot</span>
+                <strong id="potDisplay">0</strong>
+            </div>
+
+            <div class="info-card">
+                <span>Current Bet</span>
+                <strong id="currentBetDisplay">0</strong>
+            </div>
+
+            <div class="info-card">
+                <span>Players Remaining</span>
+                <strong id="playersRemainingDisplay">0</strong>
+            </div>
+
+        </section>
+
+
+        <!-- PLAYERS -->
+        <main>
+
+            <div id="playersContainer" class="players-container">
+            </div>
+
+        </main>
+
+
+        <!-- ACTION PANEL -->
+        <section class="action-panel">
+
+            <h2>Player Action</h2>
+
+            <div class="action-player">
+
+                <label for="activePlayer">
+                    Select Player
+                </label>
+
+                <select id="activePlayer"></select>
+
+            </div>
+
+
+            <p id="actionMessage" class="action-message">
+                Select an action.
+            </p>
+
+
+            <div class="bet-input">
+
+                <label for="betAmount">
+                    Amount
+                </label>
+
+                <input
+                    type="number"
+                    id="betAmount"
+                    min="1"
+                    placeholder="Enter amount"
+                >
+
+            </div>
+
+
+            <div class="action-buttons">
+
+                <button id="checkButton">
+                    Check
+                </button>
+
+                <button id="callButton">
+                    Call
+                </button>
+
+                <button id="betButton">
+                    Bet
+                </button>
+
+                <button id="raiseButton">
+                    Raise
+                </button>
+
+                <button id="allInButton">
+                    All-In
+                </button>
+
+                <button id="foldButton" class="fold-button">
+                    Fold
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- WINNER -->
+        <section class="winner-panel">
+
+            <h2>Hand Finished?</h2>
+
+            <p>
+                Select the player who won the hand.
+            </p>
+
+            <select id="winnerSelect"></select>
+
+            <button id="awardPotButton" class="primary-button">
+                Award Pot
+            </button>
+
+        </section>
+
+
+        <!-- GAME LOG -->
+        <section class="game-log-section">
+
+            <div class="section-title">
+
+                <h2>Game Log</h2>
+
+                <button id="clearLogButton">
+                    Clear Log
+                </button>
+
+            </div>
+
+            <div id="gameLog" class="game-log"></div>
+
+        </section>
+
+
+        <footer>
+            <p>
+                Educational Poker Chip Simulator
+            </p>
+            <p>
+                Virtual chips have no monetary value.
+            </p>
+        </footer>
+    </section>
+</body>
+</html>
