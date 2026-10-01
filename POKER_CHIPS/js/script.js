@@ -20,8 +20,8 @@ const resultsScreen =
 const anteAmount =
     document.getElementById("anteAmount");
 
-const playerSeats =
-    document.getElementById("playerSeats");
+const setupPokerTable =
+    document.getElementById("setupPokerTable");
 
 const playerCountDisplay =
     document.getElementById("playerCountDisplay");
@@ -65,12 +65,22 @@ const stageDisplay =
     document.getElementById("stageDisplay");
 
 
+const tablePotDisplay =
+    document.getElementById("tablePotDisplay");
+
+const tableStageDisplay =
+    document.getElementById("tableStageDisplay");
+
+
 const playersContainer =
     document.getElementById("playersContainer");
 
 
 const activePlayer =
     document.getElementById("activePlayer");
+
+const currentTurnDisplay =
+    document.getElementById("currentTurnDisplay");
 
 const betAmount =
     document.getElementById("betAmount");
@@ -132,6 +142,9 @@ const clearLogButton =
 const resultsList =
     document.getElementById("resultsList");
 
+const resultsBalance =
+    document.getElementById("resultsBalance");
+
 
 // =========================================================
 // CONSTANTS
@@ -179,16 +192,23 @@ let game = {
 
     potAwarded: false,
 
+    currentPlayerId: null,
+
     log: []
 
 };
 
 
 // =========================================================
-// CREATE PLAYER SEATS
+// CREATE SETUP PLAYER SEATS
 // =========================================================
 
-function createPlayerSeats() {
+function createSetupPlayerSeats() {
+
+    /*
+        Save existing names before rebuilding
+        the setup table.
+    */
 
     const previousInputs =
         document.querySelectorAll(
@@ -202,12 +222,25 @@ function createPlayerSeats() {
         );
 
 
+    /*
+        Remove only the player seats.
+
+        The actual poker table remains.
+    */
+
     document
-        .querySelectorAll(".player-seat")
+        .querySelectorAll(
+            ".setup-player-seat"
+        )
         .forEach(
             seat => seat.remove()
         );
 
+
+    /*
+        Generate one name input for
+        every selected player.
+    */
 
     for (
         let i = 0;
@@ -220,7 +253,7 @@ function createPlayerSeats() {
 
 
         seat.className =
-            `player-seat seat-${i + 1}`;
+            `setup-player-seat setup-seat-${i + 1}`;
 
 
         const input =
@@ -236,9 +269,23 @@ function createPlayerSeats() {
         input.maxLength = 20;
 
 
-        input.value =
-            previousNames[i] ||
-            `Player ${i + 1}`;
+        /*
+            Keep previous name if available.
+        */
+
+        if (
+            previousNames[i] !== undefined
+        ) {
+
+            input.value =
+                previousNames[i];
+
+        } else {
+
+            input.value =
+                `Player ${i + 1}`;
+
+        }
 
 
         input.placeholder =
@@ -247,7 +294,7 @@ function createPlayerSeats() {
 
         seat.appendChild(input);
 
-        playerSeats.appendChild(seat);
+        setupPokerTable.appendChild(seat);
 
     }
 
@@ -256,16 +303,16 @@ function createPlayerSeats() {
         setupPlayerCount;
 
 
-    updatePlayerControls();
+    updatePlayerCountButtons();
 
 }
 
 
 // =========================================================
-// PLAYER COUNT CONTROLS
+// PLAYER COUNT BUTTONS
 // =========================================================
 
-function updatePlayerControls() {
+function updatePlayerCountButtons() {
 
     removePlayerButton.disabled =
         setupPlayerCount <= MIN_PLAYERS;
@@ -276,6 +323,10 @@ function updatePlayerControls() {
 
 }
 
+
+// =========================================================
+// ADD PLAYER
+// =========================================================
 
 function addPlayer() {
 
@@ -290,10 +341,15 @@ function addPlayer() {
 
     setupPlayerCount++;
 
-    createPlayerSeats();
+
+    createSetupPlayerSeats();
 
 }
 
+
+// =========================================================
+// REMOVE PLAYER
+// =========================================================
 
 function removePlayer() {
 
@@ -308,7 +364,8 @@ function removePlayer() {
 
     setupPlayerCount--;
 
-    createPlayerSeats();
+
+    createSetupPlayerSeats();
 
 }
 
@@ -323,7 +380,17 @@ function resetSetup() {
 
     setupPlayerCount = 4;
 
-    createPlayerSeats();
+
+    document
+        .querySelectorAll(
+            ".setup-player-seat"
+        )
+        .forEach(
+            seat => seat.remove()
+        );
+
+
+    createSetupPlayerSeats();
 
 }
 
@@ -337,6 +404,8 @@ function startGame() {
     const ante =
         Number(anteAmount.value);
 
+
+    // Validate ante.
 
     if (
         !Number.isInteger(ante) ||
@@ -358,6 +427,27 @@ function startGame() {
         );
 
 
+    /*
+        Safety check.
+
+        There must always be between
+        2 and 8 players.
+    */
+
+    if (
+        nameInputs.length < MIN_PLAYERS ||
+        nameInputs.length > MAX_PLAYERS
+    ) {
+
+        alert(
+            "Poker requires between 2 and 8 players."
+        );
+
+        return;
+
+    }
+
+
     game = {
 
         players: [],
@@ -376,6 +466,8 @@ function startGame() {
 
         potAwarded: false,
 
+        currentPlayerId: null,
+
         log: []
 
     };
@@ -387,6 +479,11 @@ function startGame() {
             let name =
                 input.value.trim();
 
+
+            /*
+                Blank names automatically
+                become Player 1, Player 2, etc.
+            */
 
             if (name === "") {
 
@@ -403,31 +500,37 @@ function startGame() {
                 name: name,
 
                 /*
-                    Money/chips contributed throughout
-                    the ENTIRE game.
+                    Total amount this player
+                    has contributed throughout
+                    the entire game.
                 */
 
                 totalContributed: 0,
 
                 /*
-                    Money/chips received from winning
-                    pots throughout the game.
+                    Total amount this player
+                    has won throughout the game.
                 */
 
                 totalWon: 0,
 
                 /*
-                    Amount contributed during the
-                    CURRENT betting round.
+                    Amount contributed during
+                    the current betting round.
                 */
 
                 roundBet: 0,
 
+                /*
+                    Folded for current hand.
+                */
+
                 folded: false,
 
                 /*
-                    Has this player responded since
-                    the latest bet/raise?
+                    Whether the player has
+                    responded since the latest
+                    bet or raise.
                 */
 
                 acted: false
@@ -444,7 +547,7 @@ function startGame() {
 
 
     addLog(
-        `Ante is ₱${game.ante}.`
+        `Ante set to ₱${game.ante}.`
     );
 
 
@@ -452,6 +555,7 @@ function startGame() {
 
 
     showGame();
+
 
     updateGame();
 
@@ -475,6 +579,14 @@ function startNewHand() {
     game.potAwarded = false;
 
 
+    /*
+        Reset player hand information.
+
+        Total contributed and total won
+        are NOT reset because those are
+        tracked for the entire game.
+    */
+
     game.players.forEach(
         player => {
 
@@ -495,6 +607,25 @@ function startNewHand() {
 
     collectAnte();
 
+
+    /*
+        Start action with the first player.
+    */
+
+    const firstPlayer =
+        game.players.find(
+            player =>
+                !player.folded
+        );
+
+
+    if (firstPlayer) {
+
+        game.currentPlayerId =
+            firstPlayer.id;
+
+    }
+
 }
 
 
@@ -506,12 +637,16 @@ function collectAnte() {
 
     if (game.ante <= 0) {
 
+        addLog(
+            "No ante was collected."
+        );
+
         return;
 
     }
 
 
-    let total = 0;
+    let totalAnte = 0;
 
 
     game.players.forEach(
@@ -525,7 +660,7 @@ function collectAnte() {
                 game.ante;
 
 
-            total +=
+            totalAnte +=
                 game.ante;
 
         }
@@ -533,8 +668,8 @@ function collectAnte() {
 
 
     addLog(
-        `Ante ₱${game.ante} collected from each player. ` +
-        `₱${total} added to the pot.`
+        `₱${game.ante} ante collected from each player. ` +
+        `₱${totalAnte} added to the pot.`
     );
 
 }
@@ -565,12 +700,12 @@ function showGame() {
 
 function showResults() {
 
-    gameScreen.classList.add(
+    setupScreen.classList.add(
         "hidden"
     );
 
 
-    setupScreen.classList.add(
+    gameScreen.classList.add(
         "hidden"
     );
 
@@ -583,16 +718,16 @@ function showResults() {
 
 
 // =========================================================
-// UPDATE GAME
+// UPDATE ENTIRE GAME UI
 // =========================================================
 
 function updateGame() {
 
+    updateActivePlayerSelect();
+
     renderPlayers();
 
     updateGameInfo();
-
-    updatePlayerSelect();
 
     updateWinnerSelect();
 
@@ -606,7 +741,7 @@ function updateGame() {
 
 
 // =========================================================
-// GAME INFO
+// UPDATE GAME INFORMATION
 // =========================================================
 
 function updateGameInfo() {
@@ -623,17 +758,46 @@ function updateGameInfo() {
         `Hand #${game.handNumber}`;
 
 
-    stageDisplay.textContent =
+    const stage =
         STAGES[game.stageIndex] ||
         "Showdown";
 
 
-    const remaining =
+    stageDisplay.textContent =
+        stage;
+
+
+    tablePotDisplay.textContent =
+        `₱${game.pot}`;
+
+
+    tableStageDisplay.textContent =
+        stage;
+
+
+    const remainingPlayers =
         getRemainingPlayers();
 
 
     playersRemainingDisplay.textContent =
-        remaining.length;
+        remainingPlayers.length;
+
+
+    const currentPlayer =
+        getCurrentPlayer();
+
+
+    if (currentPlayer) {
+
+        currentTurnDisplay.textContent =
+            currentPlayer.name;
+
+    } else {
+
+        currentTurnDisplay.textContent =
+            "—";
+
+    }
 
 }
 
@@ -653,142 +817,25 @@ function getRemainingPlayers() {
 
 
 // =========================================================
-// RENDER PLAYERS
+// GET CURRENT PLAYER
 // =========================================================
 
-function renderPlayers() {
+function getCurrentPlayer() {
 
-    playersContainer.innerHTML = "";
-
-
-    const selectedId =
-        Number(activePlayer.value);
-
-
-    game.players.forEach(
-        player => {
-
-            const card =
-                document.createElement("div");
-
-
-            card.className =
-                "player-card";
-
-
-            if (
-                player.id === selectedId
-            ) {
-
-                card.classList.add(
-                    "active"
-                );
-
-            }
-
-
-            if (player.folded) {
-
-                card.classList.add(
-                    "folded"
-                );
-
-            }
-
-
-            if (
-                player.acted &&
-                !player.folded
-            ) {
-
-                card.classList.add(
-                    "acted"
-                );
-
-            }
-
-
-            let status = "Waiting";
-
-
-            if (player.folded) {
-
-                status = "Folded";
-
-            } else if (player.acted) {
-
-                status = "Acted";
-
-            }
-
-
-            card.innerHTML = `
-
-                <h3>
-                    ${escapeHTML(player.name)}
-                </h3>
-
-                <p>
-                    Round Bet:
-                    <strong>
-                        ₱${player.roundBet}
-                    </strong>
-                </p>
-
-                <p>
-                    Total Put In:
-                    <strong>
-                        ₱${player.totalContributed}
-                    </strong>
-                </p>
-
-                <span class="player-status">
-                    ${status}
-                </span>
-
-            `;
-
-
-            card.addEventListener(
-                "click",
-                function () {
-
-                    if (
-                        !player.folded &&
-                        !game.roundComplete
-                    ) {
-
-                        activePlayer.value =
-                            player.id;
-
-
-                        updateGame();
-
-                    }
-
-                }
-            );
-
-
-            playersContainer.appendChild(
-                card
-            );
-
-        }
+    return game.players.find(
+        player =>
+            player.id ===
+            game.currentPlayerId
     );
 
 }
 
 
 // =========================================================
-// UPDATE PLAYER SELECT
+// UPDATE HIDDEN ACTIVE PLAYER SELECT
 // =========================================================
 
-function updatePlayerSelect() {
-
-    const previousValue =
-        activePlayer.value;
-
+function updateActivePlayerSelect() {
 
     activePlayer.innerHTML = "";
 
@@ -822,19 +869,12 @@ function updatePlayerSelect() {
     );
 
 
-    const exists =
-        [...activePlayer.options]
-            .some(
-                option =>
-                    option.value ===
-                    previousValue
-            );
-
-
-    if (exists) {
+    if (
+        game.currentPlayerId !== null
+    ) {
 
         activePlayer.value =
-            previousValue;
+            game.currentPlayerId;
 
     }
 
@@ -842,12 +882,167 @@ function updatePlayerSelect() {
 
 
 // =========================================================
-// WINNER SELECT
+// RENDER GAME TABLE PLAYERS
+// =========================================================
+
+function renderPlayers() {
+
+    /*
+        Remove old player seats.
+
+        The table itself remains.
+    */
+
+    document
+        .querySelectorAll(
+            ".game-player-seat"
+        )
+        .forEach(
+            seat => seat.remove()
+        );
+
+
+    game.players.forEach(
+        (player, index) => {
+
+            const seat =
+                document.createElement("div");
+
+
+            seat.className =
+                `game-player-seat game-seat-${index + 1}`;
+
+
+            /*
+                Highlight ONLY the player
+                whose turn it currently is.
+            */
+
+            if (
+                player.id ===
+                    game.currentPlayerId &&
+                !player.folded &&
+                !game.roundComplete &&
+                game.stageIndex <
+                    STAGES.length
+            ) {
+
+                seat.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            /*
+                Folded appearance.
+            */
+
+            if (player.folded) {
+
+                seat.classList.add(
+                    "folded"
+                );
+
+            }
+
+
+            /*
+                Player has already responded.
+            */
+
+            if (
+                player.acted &&
+                !player.folded
+            ) {
+
+                seat.classList.add(
+                    "acted"
+                );
+
+            }
+
+
+            let status =
+                "Waiting";
+
+
+            if (player.folded) {
+
+                status =
+                    "Folded";
+
+            } else if (
+                player.id ===
+                    game.currentPlayerId &&
+                !game.roundComplete
+            ) {
+
+                status =
+                    "Your Turn";
+
+            } else if (
+                player.acted
+            ) {
+
+                status =
+                    "Acted";
+
+            }
+
+
+            seat.innerHTML = `
+
+                <h3>
+                    ${escapeHTML(player.name)}
+                </h3>
+
+
+                <div class="seat-bet">
+
+                    Round Bet:
+
+                    <strong>
+                        ₱${player.roundBet}
+                    </strong>
+
+                </div>
+
+
+                <div class="seat-total">
+
+                    Total Put In:
+                    ₱${player.totalContributed}
+
+                </div>
+
+
+                <span class="player-seat-status">
+
+                    ${status}
+
+                </span>
+
+            `;
+
+
+            playersContainer.appendChild(
+                seat
+            );
+
+        }
+    );
+
+}
+
+
+// =========================================================
+// UPDATE WINNER SELECT
 // =========================================================
 
 function updateWinnerSelect() {
 
-    const previous =
+    const previousValue =
         winnerSelect.value;
 
 
@@ -880,19 +1075,19 @@ function updateWinnerSelect() {
         );
 
 
-    const exists =
+    const stillExists =
         [...winnerSelect.options]
             .some(
                 option =>
                     option.value ===
-                    previous
+                    previousValue
             );
 
 
-    if (exists) {
+    if (stillExists) {
 
         winnerSelect.value =
-            previous;
+            previousValue;
 
     }
 
@@ -900,31 +1095,13 @@ function updateWinnerSelect() {
 
 
 // =========================================================
-// ACTIVE PLAYER
-// =========================================================
-
-function getActivePlayer() {
-
-    const id =
-        Number(activePlayer.value);
-
-
-    return game.players.find(
-        player =>
-            player.id === id
-    );
-
-}
-
-
-// =========================================================
-// CHECK
+// CHECK ACTION
 // =========================================================
 
 function check() {
 
     const player =
-        getActivePlayer();
+        getCurrentPlayer();
 
 
     if (!player) {
@@ -934,18 +1111,26 @@ function check() {
     }
 
 
+    /*
+        You may only check if you have
+        matched the current bet.
+    */
+
     if (
         player.roundBet !==
         game.currentBet
     ) {
 
+        const needed =
+            game.currentBet -
+            player.roundBet;
+
+
         alert(
             `${player.name} cannot check. ` +
-            `They need ₱${
-                game.currentBet -
-                player.roundBet
-            } to call.`
+            `₱${needed} is needed to call.`
         );
+
 
         return;
 
@@ -960,23 +1145,27 @@ function check() {
     );
 
 
-    afterAction(player.id);
+    afterAction(
+        player.id
+    );
 
 }
 
 
 // =========================================================
-// BET
+// BET ACTION
 // =========================================================
 
 function bet() {
 
     const player =
-        getActivePlayer();
+        getCurrentPlayer();
 
 
     const amount =
-        Number(betAmount.value);
+        Number(
+            betAmount.value
+        );
 
 
     if (!player) {
@@ -986,11 +1175,19 @@ function bet() {
     }
 
 
-    if (game.currentBet !== 0) {
+    /*
+        Bet is only available when
+        no bet currently exists.
+    */
+
+    if (
+        game.currentBet !== 0
+    ) {
 
         alert(
-            "There is already a bet. Use Call or Raise."
+            "A bet already exists. Use Call or Raise."
         );
+
 
         return;
 
@@ -1021,8 +1218,8 @@ function bet() {
 
 
     /*
-        A new bet means everybody else
-        must respond.
+        Everyone else must now respond
+        to this bet.
     */
 
     resetActedAfterAggression(
@@ -1041,19 +1238,21 @@ function bet() {
     betAmount.value = "";
 
 
-    afterAction(player.id);
+    afterAction(
+        player.id
+    );
 
 }
 
 
 // =========================================================
-// CALL
+// CALL ACTION
 // =========================================================
 
 function call() {
 
     const player =
-        getActivePlayer();
+        getCurrentPlayer();
 
 
     if (!player) {
@@ -1063,16 +1262,19 @@ function call() {
     }
 
 
-    const needed =
+    const amountNeeded =
         game.currentBet -
         player.roundBet;
 
 
-    if (needed <= 0) {
+    if (
+        amountNeeded <= 0
+    ) {
 
         alert(
             `${player.name} does not need to call.`
         );
+
 
         return;
 
@@ -1080,42 +1282,46 @@ function call() {
 
 
     player.roundBet +=
-        needed;
+        amountNeeded;
 
 
     player.totalContributed +=
-        needed;
+        amountNeeded;
 
 
     game.pot +=
-        needed;
+        amountNeeded;
 
 
     player.acted = true;
 
 
     addLog(
-        `${player.name} called ₱${needed}.`
+        `${player.name} called ₱${amountNeeded}.`
     );
 
 
-    afterAction(player.id);
+    afterAction(
+        player.id
+    );
 
 }
 
 
 // =========================================================
-// RAISE
+// RAISE ACTION
 // =========================================================
 
 function raiseBet() {
 
     const player =
-        getActivePlayer();
+        getCurrentPlayer();
 
 
     const raiseAmount =
-        Number(betAmount.value);
+        Number(
+            betAmount.value
+        );
 
 
     if (!player) {
@@ -1125,11 +1331,14 @@ function raiseBet() {
     }
 
 
-    if (game.currentBet === 0) {
+    if (
+        game.currentBet === 0
+    ) {
 
         alert(
-            "There is no bet to raise. Use Bet."
+            "There is no existing bet. Use Bet instead."
         );
+
 
         return;
 
@@ -1143,26 +1352,44 @@ function raiseBet() {
     }
 
 
+    /*
+        First determine how much this
+        player still needs to call.
+    */
+
     const callAmount =
         game.currentBet -
         player.roundBet;
 
 
-    const totalAmount =
+    /*
+        Example:
+
+        Current bet = 10
+        Player currently has = 0
+        Raise amount = 5
+
+        Player contributes:
+        10 call + 5 raise = 15
+
+        New current bet = 15
+    */
+
+    const totalContribution =
         callAmount +
         raiseAmount;
 
 
     player.roundBet +=
-        totalAmount;
+        totalContribution;
 
 
     player.totalContributed +=
-        totalAmount;
+        totalContribution;
 
 
     game.pot +=
-        totalAmount;
+        totalContribution;
 
 
     game.currentBet =
@@ -1170,8 +1397,8 @@ function raiseBet() {
 
 
     /*
-        Because somebody raised,
-        everybody else must respond again.
+        A raise means everybody else
+        must respond again.
     */
 
     resetActedAfterAggression(
@@ -1191,13 +1418,15 @@ function raiseBet() {
     betAmount.value = "";
 
 
-    afterAction(player.id);
+    afterAction(
+        player.id
+    );
 
 }
 
 
 // =========================================================
-// RESET ACTION AFTER BET / RAISE
+// RESET ACTED AFTER BET / RAISE
 // =========================================================
 
 function resetActedAfterAggression(
@@ -1209,7 +1438,8 @@ function resetActedAfterAggression(
 
             if (
                 !player.folded &&
-                player.id !== aggressorId
+                player.id !==
+                    aggressorId
             ) {
 
                 player.acted = false;
@@ -1223,13 +1453,13 @@ function resetActedAfterAggression(
 
 
 // =========================================================
-// FOLD
+// FOLD ACTION
 // =========================================================
 
 function fold() {
 
     const player =
-        getActivePlayer();
+        getCurrentPlayer();
 
 
     if (!player) {
@@ -1249,43 +1479,52 @@ function fold() {
     );
 
 
-    const remaining =
+    const remainingPlayers =
         getRemainingPlayers();
 
 
     /*
         If only one player remains,
-        the hand immediately ends.
+        that player automatically wins.
     */
 
-    if (remaining.length === 1) {
+    if (
+        remainingPlayers.length === 1
+    ) {
 
         finishByFold(
-            remaining[0]
+            remainingPlayers[0]
         );
+
 
         return;
 
     }
 
 
-    afterAction(player.id);
+    afterAction(
+        player.id
+    );
 
 }
 
 
 // =========================================================
-// AFTER EVERY ACTION
+// AFTER PLAYER ACTION
 // =========================================================
 
-function afterAction(lastPlayerId) {
+function afterAction(
+    lastPlayerId
+) {
 
     /*
-        First check if the betting round
-        is now finished.
+        Check whether everyone has now
+        completed the betting round.
     */
 
-    if (isBettingRoundComplete()) {
+    if (
+        isBettingRoundComplete()
+    ) {
 
         completeBettingRound();
 
@@ -1295,9 +1534,8 @@ function afterAction(lastPlayerId) {
 
 
     /*
-        Otherwise automatically move the
-        selection to the next player who
-        still needs to act.
+        Otherwise automatically find
+        the next player who must act.
     */
 
     selectNextPlayer(
@@ -1311,16 +1549,18 @@ function afterAction(lastPlayerId) {
 
 
 // =========================================================
-// CHECK BETTING ROUND COMPLETE
+// IS BETTING ROUND COMPLETE?
 // =========================================================
 
 function isBettingRoundComplete() {
 
-    const remaining =
+    const remainingPlayers =
         getRemainingPlayers();
 
 
-    if (remaining.length <= 1) {
+    if (
+        remainingPlayers.length <= 1
+    ) {
 
         return true;
 
@@ -1328,24 +1568,24 @@ function isBettingRoundComplete() {
 
 
     /*
-        Every remaining player must have
-        acted.
+        Everyone still in the hand
+        must have acted.
     */
 
     const everyoneActed =
-        remaining.every(
+        remainingPlayers.every(
             player =>
                 player.acted
         );
 
 
     /*
-        Every remaining player must also
-        have matched the current bet.
+        Everyone still in the hand
+        must have matched the current bet.
     */
 
-    const betsMatched =
-        remaining.every(
+    const everyoneMatched =
+        remainingPlayers.every(
             player =>
                 player.roundBet ===
                 game.currentBet
@@ -1354,7 +1594,7 @@ function isBettingRoundComplete() {
 
     return (
         everyoneActed &&
-        betsMatched
+        everyoneMatched
     );
 
 }
@@ -1365,45 +1605,83 @@ function isBettingRoundComplete() {
 // =========================================================
 
 function selectNextPlayer(
-    currentId
+    currentPlayerId
 ) {
 
-    const count =
+    const playerCount =
         game.players.length;
 
 
+    /*
+        Find the array index of the
+        current player.
+
+        This is safer than assuming
+        player ID always equals array index.
+    */
+
+    const currentIndex =
+        game.players.findIndex(
+            player =>
+                player.id ===
+                currentPlayerId
+        );
+
+
+    /*
+        Move clockwise through players.
+    */
+
     for (
         let offset = 1;
-        offset <= count;
+        offset <= playerCount;
         offset++
     ) {
 
         const index =
-            (currentId + offset) %
-            count;
+            (
+                currentIndex +
+                offset
+            ) %
+            playerCount;
 
 
         const player =
             game.players[index];
 
 
+        /*
+            Skip folded players.
+
+            A player needs action if:
+            - they have not acted yet
+            OR
+            - they haven't matched
+              the latest bet/raise.
+        */
+
         if (
             !player.folded &&
             (
                 !player.acted ||
                 player.roundBet <
-                game.currentBet
+                    game.currentBet
             )
         ) {
 
-            activePlayer.value =
+            game.currentPlayerId =
                 player.id;
+
 
             return;
 
         }
 
     }
+
+
+    game.currentPlayerId =
+        null;
 
 }
 
@@ -1416,14 +1694,17 @@ function completeBettingRound() {
 
     game.roundComplete = true;
 
+    game.currentPlayerId = null;
+
+
+    const currentStage =
+        STAGES[
+            game.stageIndex
+        ];
+
 
     addLog(
-        `${STAGES[game.stageIndex]} betting round completed.`
-    );
-
-
-    roundMessage.classList.remove(
-        "hidden"
+        `${currentStage} betting round completed.`
     );
 
 
@@ -1432,9 +1713,13 @@ function completeBettingRound() {
     );
 
 
+    roundMessage.classList.remove(
+        "hidden"
+    );
+
+
     /*
         River completed.
-        Time for showdown.
     */
 
     if (
@@ -1510,6 +1795,11 @@ function nextBettingRound() {
     game.roundComplete = false;
 
 
+    /*
+        New betting round:
+        reset only round-specific information.
+    */
+
     game.players.forEach(
         player => {
 
@@ -1545,22 +1835,27 @@ function nextBettingRound() {
 
 
 // =========================================================
-// SELECT FIRST PLAYER
+// SELECT FIRST AVAILABLE PLAYER
 // =========================================================
 
 function selectFirstAvailablePlayer() {
 
-    const player =
+    const firstPlayer =
         game.players.find(
             player =>
                 !player.folded
         );
 
 
-    if (player) {
+    if (firstPlayer) {
 
-        activePlayer.value =
-            player.id;
+        game.currentPlayerId =
+            firstPlayer.id;
+
+    } else {
+
+        game.currentPlayerId =
+            null;
 
     }
 
@@ -1575,6 +1870,11 @@ function showShowdown() {
 
     game.stageIndex =
         STAGES.length;
+
+
+    game.roundComplete = true;
+
+    game.currentPlayerId = null;
 
 
     roundMessage.classList.add(
@@ -1606,7 +1906,9 @@ function showShowdown() {
 // WIN BY EVERYONE ELSE FOLDING
 // =========================================================
 
-function finishByFold(winner) {
+function finishByFold(
+    winner
+) {
 
     const winnings =
         game.pot;
@@ -1620,32 +1922,46 @@ function finishByFold(winner) {
 
     game.potAwarded = true;
 
+    game.currentPlayerId = null;
+
 
     addLog(
         `${winner.name} won Hand #${game.handNumber} ` +
         `because all other players folded. ` +
-        `Pot: ₱${winnings}.`
+        `Pot awarded: ₱${winnings}.`
     );
 
 
-    alert(
-        `${winner.name} wins ₱${winnings}!\n` +
-        `Everyone else folded.`
+    updateGame();
+
+
+    setTimeout(
+        function () {
+
+            alert(
+                `${winner.name} wins ₱${winnings}!\n\n` +
+                `Everyone else folded.`
+            );
+
+
+            startNextHand();
+
+        },
+        100
     );
-
-
-    startNextHand();
 
 }
 
 
 // =========================================================
-// AWARD POT
+// AWARD POT AT SHOWDOWN
 // =========================================================
 
 function awardPot() {
 
-    if (game.pot <= 0) {
+    if (
+        game.pot <= 0
+    ) {
 
         alert(
             "There are no chips in the pot."
@@ -1696,12 +2012,22 @@ function awardPot() {
     );
 
 
-    alert(
-        `${winner.name} wins ₱${winnings}!`
+    updateGame();
+
+
+    setTimeout(
+        function () {
+
+            alert(
+                `${winner.name} wins ₱${winnings}!`
+            );
+
+
+            startNextHand();
+
+        },
+        100
     );
-
-
-    startNextHand();
 
 }
 
@@ -1730,10 +2056,10 @@ function startNextHand() {
     );
 
 
+    betAmount.value = "";
+
+
     startNewHand();
-
-
-    selectFirstAvailablePlayer();
 
 
     updateGame();
@@ -1747,7 +2073,9 @@ function startNextHand() {
 
 function updateActionMessage() {
 
-    if (game.roundComplete) {
+    if (
+        game.roundComplete
+    ) {
 
         return;
 
@@ -1755,77 +2083,91 @@ function updateActionMessage() {
 
 
     const player =
-        getActivePlayer();
+        getCurrentPlayer();
 
 
     if (!player) {
 
         actionMessage.textContent =
-            "No player available.";
+            "Waiting for the next round.";
 
         return;
 
     }
 
 
-    if (player.folded) {
-
-        actionMessage.textContent =
-            `${player.name} has folded.`;
-
-        return;
-
-    }
-
-
-    const needed =
+    const amountNeeded =
         game.currentBet -
         player.roundBet;
 
 
-    if (needed > 0) {
+    /*
+        Player needs to respond
+        to a bet or raise.
+    */
+
+    if (
+        amountNeeded > 0
+    ) {
 
         actionMessage.textContent =
-            `${player.name} needs ₱${needed} to call.`;
+            `${player.name}'s turn — ` +
+            `Call ₱${amountNeeded}, Raise, or Fold.`;
+
 
         return;
 
     }
 
 
-    if (game.currentBet === 0) {
+    /*
+        Nobody has bet yet.
+    */
+
+    if (
+        game.currentBet === 0
+    ) {
 
         actionMessage.textContent =
-            `${player.name} may Check or Bet.`;
+            `${player.name}'s turn — Check or Bet.`;
+
 
         return;
 
     }
 
+
+    /*
+        Player has already matched
+        current bet.
+    */
 
     actionMessage.textContent =
-        `${player.name} has matched ₱${game.currentBet}. ` +
-        `They may Check or Raise.`;
+        `${player.name}'s turn — ` +
+        `current bet is ₱${game.currentBet}. ` +
+        `Check or Raise.`;
 
 }
 
 
 // =========================================================
-// ACTION BUTTONS
+// UPDATE ACTION BUTTONS
 // =========================================================
 
 function updateActionButtons() {
 
     const buttons = [
-
         checkButton,
         callButton,
         betButton,
         raiseButton,
         foldButton
-
     ];
 
+
+    /*
+        Disable all buttons first.
+    */
 
     buttons.forEach(
         button => {
@@ -1840,7 +2182,9 @@ function updateActionButtons() {
     );
 
 
-    if (game.roundComplete) {
+    if (
+        game.roundComplete
+    ) {
 
         return;
 
@@ -1848,7 +2192,7 @@ function updateActionButtons() {
 
 
     const player =
-        getActivePlayer();
+        getCurrentPlayer();
 
 
     if (
@@ -1861,17 +2205,22 @@ function updateActionButtons() {
     }
 
 
-    const needed =
+    const amountNeeded =
         game.currentBet -
         player.roundBet;
 
 
     /*
-        No bet exists.
-        Player may check or bet.
+        No bet currently exists.
+
+        CHECK
+        BET
+        FOLD
     */
 
-    if (game.currentBet === 0) {
+    if (
+        game.currentBet === 0
+    ) {
 
         enableAction(
             checkButton
@@ -1894,10 +2243,17 @@ function updateActionButtons() {
 
 
     /*
-        Player hasn't matched the bet.
+        Player must respond to
+        an existing bet.
+
+        CALL
+        RAISE
+        FOLD
     */
 
-    if (needed > 0) {
+    if (
+        amountNeeded > 0
+    ) {
 
         enableAction(
             callButton
@@ -1920,8 +2276,12 @@ function updateActionButtons() {
 
 
     /*
-        Player has already matched
-        current bet.
+        Player already matched
+        the current bet.
+
+        CHECK
+        RAISE
+        FOLD
     */
 
     enableAction(
@@ -1942,12 +2302,15 @@ function updateActionButtons() {
 
 
 // =========================================================
-// ENABLE BUTTON
+// ENABLE ACTION BUTTON
 // =========================================================
 
-function enableAction(button) {
+function enableAction(
+    button
+) {
 
     button.disabled = false;
+
 
     button.classList.add(
         "available"
@@ -1963,23 +2326,26 @@ function enableAction(button) {
 function endGame() {
 
     /*
-        Prevent ending while chips remain
-        unawarded in the pot because that
-        would make the final accounting
-        incorrect.
+        If there is still an active pot,
+        the accounting won't balance because
+        those chips have been contributed
+        but not awarded.
     */
 
-    if (game.pot > 0) {
+    if (
+        game.pot > 0
+    ) {
 
-        const confirmed =
+        const continueEnding =
             confirm(
                 `There is still ₱${game.pot} in the pot.\n\n` +
-                `The pot should normally be awarded before ending.\n\n` +
+                `For accurate results, finish the current hand ` +
+                `and award the pot first.\n\n` +
                 `Show results anyway?`
             );
 
 
-        if (!confirmed) {
+        if (!continueEnding) {
 
             return;
 
@@ -1990,13 +2356,14 @@ function endGame() {
 
     renderResults();
 
+
     showResults();
 
 }
 
 
 // =========================================================
-// RESULTS
+// RENDER RESULTS
 // =========================================================
 
 function renderResults() {
@@ -2004,12 +2371,27 @@ function renderResults() {
     resultsList.innerHTML = "";
 
 
+    let totalNet = 0;
+
+
     game.players.forEach(
         player => {
+
+            /*
+                NET RESULT
+
+                Total received
+                -
+                Total contributed
+            */
 
             const net =
                 player.totalWon -
                 player.totalContributed;
+
+
+            totalNet +=
+                net;
 
 
             const card =
@@ -2030,16 +2412,24 @@ function renderResults() {
                 "₱0";
 
 
-            if (net > 0) {
+            if (
+                net > 0
+            ) {
 
-                resultClass = "win";
+                resultClass =
+                    "win";
+
 
                 resultText =
                     `+₱${net}`;
 
-            } else if (net < 0) {
+            } else if (
+                net < 0
+            ) {
 
-                resultClass = "loss";
+                resultClass =
+                    "loss";
+
 
                 resultText =
                     `-₱${Math.abs(net)}`;
@@ -2055,14 +2445,15 @@ function renderResults() {
                         ${escapeHTML(player.name)}
                     </h3>
 
+
                     <div class="result-details">
 
-                        Put In:
+                        Total Put In:
                         ₱${player.totalContributed}
 
-                        &nbsp; • &nbsp;
+                        <br>
 
-                        Won:
+                        Total Won:
                         ₱${player.totalWon}
 
                     </div>
@@ -2086,6 +2477,36 @@ function renderResults() {
         }
     );
 
+
+    /*
+        If every pot has been awarded,
+        everybody's net results should
+        add up to exactly zero.
+    */
+
+    if (
+        totalNet === 0
+    ) {
+
+        resultsBalance.className =
+            "results-balance balanced";
+
+
+        resultsBalance.textContent =
+            "✓ Results balanced — total wins and losses equal ₱0.";
+
+    } else {
+
+        resultsBalance.className =
+            "results-balance unbalanced";
+
+
+        resultsBalance.textContent =
+            `Unawarded balance: ₱${Math.abs(totalNet)}. ` +
+            `A pot may not have been awarded before ending the game.`;
+
+    }
+
 }
 
 
@@ -2093,7 +2514,9 @@ function renderResults() {
 // VALIDATE AMOUNT
 // =========================================================
 
-function validAmount(amount) {
+function validAmount(
+    amount
+) {
 
     if (
         !Number.isInteger(amount) ||
@@ -2101,8 +2524,9 @@ function validAmount(amount) {
     ) {
 
         alert(
-            "Please enter a valid amount."
+            "Please enter a valid amount greater than 0."
         );
+
 
         return false;
 
@@ -2115,18 +2539,24 @@ function validAmount(amount) {
 
 
 // =========================================================
-// GAME LOG
+// ADD GAME LOG ENTRY
 // =========================================================
 
-function addLog(message) {
+function addLog(
+    message
+) {
 
     game.log.unshift(
         message
     );
 
 
+    /*
+        Prevent unlimited log growth.
+    */
+
     if (
-        game.log.length > 150
+        game.log.length > 200
     ) {
 
         game.log.pop();
@@ -2135,6 +2565,10 @@ function addLog(message) {
 
 }
 
+
+// =========================================================
+// RENDER GAME LOG
+// =========================================================
 
 function renderLog() {
 
@@ -2169,10 +2603,39 @@ function renderLog() {
 
 
 // =========================================================
-// HTML SAFETY
+// CLEAR GAME LOG
 // =========================================================
 
-function escapeHTML(text) {
+function clearGameLog() {
+
+    const confirmed =
+        confirm(
+            "Clear the game log?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    game.log = [];
+
+
+    renderLog();
+
+}
+
+
+// =========================================================
+// ESCAPE PLAYER NAMES
+// =========================================================
+
+function escapeHTML(
+    text
+) {
 
     const element =
         document.createElement(
@@ -2241,12 +2704,6 @@ startGameButton.addEventListener(
 );
 
 
-activePlayer.addEventListener(
-    "change",
-    updateGame
-);
-
-
 checkButton.addEventListener(
     "click",
     check
@@ -2309,13 +2766,7 @@ newGameButton.addEventListener(
 
 clearLogButton.addEventListener(
     "click",
-    function () {
-
-        game.log = [];
-
-        renderLog();
-
-    }
+    clearGameLog
 );
 
 
@@ -2323,4 +2774,4 @@ clearLogButton.addEventListener(
 // INITIALIZE
 // =========================================================
 
-createPlayerSeats();
+createSetupPlayerSeats();
