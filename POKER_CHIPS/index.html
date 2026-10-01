@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -11,18 +12,29 @@
 
     <title>BSIT Poker Calculator</title>
 
-    <link rel="stylesheet" href="css/styles.css">
+    <link
+        rel="stylesheet"
+        href="css/styles.css"
+    >
 
-    <script src="js/script.js" defer></script>
+    <script
+        src="js/script.js"
+        defer
+    ></script>
+
 </head>
 
 <body>
 
-    <!-- ========================================= -->
-    <!-- SETUP SCREEN -->
-    <!-- ========================================= -->
 
-    <section id="setupScreen" class="screen">
+    <!-- ================================================= -->
+    <!-- SETUP SCREEN -->
+    <!-- ================================================= -->
+
+    <section
+        id="setupScreen"
+        class="screen"
+    >
 
         <header class="setup-header">
 
@@ -48,9 +60,10 @@
             <h2>Ante</h2>
 
             <p class="setup-description">
-                Amount every player contributes
-                at the beginning of each hand.
+                Amount each player contributes
+                at the beginning of every hand.
             </p>
+
 
             <div class="ante-box">
 
@@ -75,42 +88,76 @@
 
             <h2>Players</h2>
 
+            <p class="setup-description">
+                Add between 2 and 8 players
+                and enter their names.
+            </p>
+
+
             <div
-                id="playerSeats"
-                class="poker-table"
+                id="setupPokerTable"
+                class="setup-poker-table"
             >
 
-                <div class="table-felt">
-                    <div class="inner-table"></div>
+                <div class="setup-table-felt">
+
+                    <div class="setup-inner-table">
+
+                        <span>
+                            POKER
+                        </span>
+
+                    </div>
+
                 </div>
+
+
+                <!--
+                    Player name inputs are generated
+                    here using JavaScript.
+                -->
 
             </div>
 
 
-            <div class="player-controls">
+            <div class="player-count-controls">
 
                 <button
                     id="removePlayerButton"
                     type="button"
+                    aria-label="Remove player"
                 >
                     −
                 </button>
 
-                <span>
+
+                <div class="player-count-display">
+
                     <strong id="playerCountDisplay">
                         4
                     </strong>
-                    Players
-                </span>
+
+                    <span>
+                        Players
+                    </span>
+
+                </div>
+
 
                 <button
                     id="addPlayerButton"
                     type="button"
+                    aria-label="Add player"
                 >
                     +
                 </button>
 
             </div>
+
+
+            <p class="player-limit">
+                Minimum 2 • Maximum 8
+            </p>
 
         </section>
 
@@ -118,6 +165,7 @@
         <button
             id="startGameButton"
             class="start-button"
+            type="button"
         >
             Start
         </button>
@@ -126,20 +174,24 @@
 
 
 
-    <!-- ========================================= -->
+    <!-- ================================================= -->
     <!-- GAME SCREEN -->
-    <!-- ========================================= -->
+    <!-- ================================================= -->
 
     <section
         id="gameScreen"
         class="screen hidden"
     >
 
+        <!-- HEADER -->
+
         <header class="game-header">
 
             <div>
 
-                <h1>BSIT Poker Calculator</h1>
+                <h1>
+                    BSIT Poker Calculator
+                </h1>
 
                 <p id="handDisplay">
                     Hand #1
@@ -147,9 +199,11 @@
 
             </div>
 
+
             <button
                 id="endGameButton"
                 class="end-game-button"
+                type="button"
             >
                 End Game
             </button>
@@ -157,11 +211,13 @@
         </header>
 
 
-        <!-- CURRENT STAGE -->
+        <!-- CURRENT ROUND -->
 
         <section class="stage-section">
 
-            <span>Current Round</span>
+            <span>
+                CURRENT ROUND
+            </span>
 
             <h2 id="stageDisplay">
                 Pre-Flop
@@ -170,13 +226,15 @@
         </section>
 
 
-        <!-- GAME INFO -->
+        <!-- GAME INFORMATION -->
 
         <section class="game-info">
 
             <div class="info-card">
 
-                <span>Pot</span>
+                <span>
+                    Pot
+                </span>
 
                 <strong id="potDisplay">
                     ₱0
@@ -187,7 +245,9 @@
 
             <div class="info-card">
 
-                <span>Current Bet</span>
+                <span>
+                    Current Bet
+                </span>
 
                 <strong id="currentBetDisplay">
                     ₱0
@@ -198,7 +258,9 @@
 
             <div class="info-card">
 
-                <span>Players</span>
+                <span>
+                    Players Remaining
+                </span>
 
                 <strong id="playersRemainingDisplay">
                     0
@@ -209,7 +271,57 @@
         </section>
 
 
-        <!-- ROUND MESSAGE -->
+
+        <!-- ================================================= -->
+        <!-- POKER TABLE -->
+        <!-- ================================================= -->
+
+        <main class="game-table-section">
+
+            <div
+                id="playersContainer"
+                class="game-poker-table"
+            >
+
+                <div class="game-table-felt">
+
+                    <div class="game-inner-table">
+
+                        <div class="table-center-info">
+
+                            <span>
+                                POT
+                            </span>
+
+                            <strong id="tablePotDisplay">
+                                ₱0
+                            </strong>
+
+                            <small id="tableStageDisplay">
+                                Pre-Flop
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!--
+                    Game player seats are generated
+                    here using JavaScript.
+                -->
+
+            </div>
+
+        </main>
+
+
+
+        <!-- ================================================= -->
+        <!-- ROUND COMPLETE -->
+        <!-- ================================================= -->
 
         <section
             id="roundMessage"
@@ -224,9 +336,11 @@
                 Everyone has completed their action.
             </p>
 
+
             <button
                 id="nextRoundButton"
                 class="next-round-button"
+                type="button"
             >
                 Continue
             </button>
@@ -234,37 +348,43 @@
         </section>
 
 
-        <!-- PLAYER CARDS -->
 
-        <main>
-
-            <div
-                id="playersContainer"
-                class="players-container"
-            ></div>
-
-        </main>
-
-
+        <!-- ================================================= -->
         <!-- ACTION PANEL -->
+        <!-- ================================================= -->
 
         <section
             id="actionPanel"
             class="action-panel"
         >
 
-            <h2>Player Action</h2>
+            <h2>
+                Player Action
+            </h2>
 
 
-            <div class="action-player">
+            <div class="current-turn-box">
 
-                <label for="activePlayer">
-                    Current Player
-                </label>
+                <span>
+                    CURRENT TURN
+                </span>
 
-                <select id="activePlayer"></select>
+                <strong id="currentTurnDisplay">
+                    Player 1
+                </strong>
 
             </div>
+
+
+            <!--
+                Kept for the JS logic,
+                but the system controls whose turn it is.
+            -->
+
+            <select
+                id="activePlayer"
+                class="hidden"
+            ></select>
 
 
             <p
@@ -278,41 +398,61 @@
             <div class="bet-input">
 
                 <label for="betAmount">
-                    Amount
+                    Bet / Raise Amount
                 </label>
 
-                <input
-                    type="number"
-                    id="betAmount"
-                    min="1"
-                    step="1"
-                    placeholder="Enter amount"
-                >
+                <div class="money-input">
+
+                    <span>
+                        ₱
+                    </span>
+
+                    <input
+                        type="number"
+                        id="betAmount"
+                        min="1"
+                        step="1"
+                        placeholder="Enter amount"
+                    >
+
+                </div>
 
             </div>
 
 
             <div class="action-buttons">
 
-                <button id="checkButton">
+                <button
+                    id="checkButton"
+                    type="button"
+                >
                     Check
                 </button>
 
-                <button id="callButton">
+                <button
+                    id="callButton"
+                    type="button"
+                >
                     Call
                 </button>
 
-                <button id="betButton">
+                <button
+                    id="betButton"
+                    type="button"
+                >
                     Bet
                 </button>
 
-                <button id="raiseButton">
+                <button
+                    id="raiseButton"
+                    type="button"
+                >
                     Raise
                 </button>
 
                 <button
                     id="foldButton"
-                    class="fold-button"
+                    type="button"
                 >
                     Fold
                 </button>
@@ -322,24 +462,37 @@
         </section>
 
 
-        <!-- WINNER -->
+
+        <!-- ================================================= -->
+        <!-- SHOWDOWN -->
+        <!-- ================================================= -->
 
         <section
             id="winnerPanel"
             class="winner-panel hidden"
         >
 
-            <h2>Showdown</h2>
+            <h2>
+                Showdown
+            </h2>
 
             <p>
-                Select the winner of this hand.
+                Select the player who won the hand.
             </p>
 
-            <select id="winnerSelect"></select>
+
+            <label for="winnerSelect">
+                Winner
+            </label>
+
+            <select id="winnerSelect">
+            </select>
+
 
             <button
                 id="awardPotButton"
                 class="primary-button"
+                type="button"
             >
                 Award Pot
             </button>
@@ -347,34 +500,66 @@
         </section>
 
 
+
+        <!-- ================================================= -->
         <!-- GAME LOG -->
+        <!-- ================================================= -->
 
         <section class="game-log-section">
 
             <div class="section-title">
 
-                <h2>Game Log</h2>
+                <div>
 
-                <button id="clearLogButton">
+                    <h2>
+                        Game Log
+                    </h2>
+
+                    <p>
+                        All actions are recorded here.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="clearLogButton"
+                    type="button"
+                >
                     Clear Log
                 </button>
 
             </div>
 
+
             <div
                 id="gameLog"
                 class="game-log"
-            ></div>
+            >
+            </div>
 
         </section>
+
+
+        <footer>
+
+            <p>
+                Educational Poker Chip Calculator
+            </p>
+
+            <p>
+                Virtual chips have no monetary value.
+            </p>
+
+        </footer>
 
     </section>
 
 
 
-    <!-- ========================================= -->
+    <!-- ================================================= -->
     <!-- RESULTS SCREEN -->
-    <!-- ========================================= -->
+    <!-- ================================================= -->
 
     <section
         id="resultsScreen"
@@ -383,16 +568,27 @@
 
         <div class="results-container">
 
-            <h1>Game Results</h1>
+            <h1>
+                Game Results
+            </h1>
 
             <p class="results-subtitle">
                 Final Win / Loss Summary
             </p>
 
+
             <div
                 id="resultsList"
                 class="results-list"
-            ></div>
+            >
+            </div>
+
+
+            <div
+                id="resultsBalance"
+                class="results-balance"
+            >
+            </div>
 
 
             <div class="results-actions">
@@ -400,13 +596,16 @@
                 <button
                     id="backToGameButton"
                     class="secondary-button"
+                    type="button"
                 >
                     Back to Game
                 </button>
 
+
                 <button
                     id="newGameButton"
                     class="primary-button"
+                    type="button"
                 >
                     New Game
                 </button>
@@ -416,6 +615,7 @@
         </div>
 
     </section>
+
 
 </body>
 
