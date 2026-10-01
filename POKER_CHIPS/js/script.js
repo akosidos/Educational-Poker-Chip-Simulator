@@ -1,28 +1,64 @@
 // =========================================================
-// POKER CHIP SIMULATOR
+// POKER CHIP CALCULATOR
 // script.js
 // =========================================================
 
 
-// -------------------------
+// =========================================================
 // ELEMENTS
-// -------------------------
+// =========================================================
 
-const setupScreen = document.getElementById("setupScreen");
-const gameScreen = document.getElementById("gameScreen");
+const setupScreen =
+    document.getElementById("setupScreen");
 
-const playerCount = document.getElementById("playerCount");
-const startingChips = document.getElementById("startingChips");
-const playerNames = document.getElementById("playerNames");
+const gameScreen =
+    document.getElementById("gameScreen");
 
-const startGameButton = document.getElementById("startGameButton");
-const continueGameButton = document.getElementById("continueGameButton");
-const newGameButton = document.getElementById("newGameButton");
 
-const potDisplay = document.getElementById("potDisplay");
-const currentBetDisplay = document.getElementById("currentBetDisplay");
+const startingChips =
+    document.getElementById("startingChips");
+
+const anteAmount =
+    document.getElementById("anteAmount");
+
+const playerSeats =
+    document.getElementById("playerSeats");
+
+const playerCountDisplay =
+    document.getElementById("playerCountDisplay");
+
+
+const addPlayerButton =
+    document.getElementById("addPlayerButton");
+
+const removePlayerButton =
+    document.getElementById("removePlayerButton");
+
+const resetSetupButton =
+    document.getElementById("resetSetupButton");
+
+const startGameButton =
+    document.getElementById("startGameButton");
+
+const continueGameButton =
+    document.getElementById("continueGameButton");
+
+const newGameButton =
+    document.getElementById("newGameButton");
+
+
+const potDisplay =
+    document.getElementById("potDisplay");
+
+const currentBetDisplay =
+    document.getElementById("currentBetDisplay");
+
 const playersRemainingDisplay =
     document.getElementById("playersRemainingDisplay");
+
+const handDisplay =
+    document.getElementById("handDisplay");
+
 
 const playersContainer =
     document.getElementById("playersContainer");
@@ -32,6 +68,7 @@ const activePlayer =
 
 const betAmount =
     document.getElementById("betAmount");
+
 
 const checkButton =
     document.getElementById("checkButton");
@@ -51,6 +88,7 @@ const allInButton =
 const foldButton =
     document.getElementById("foldButton");
 
+
 const actionMessage =
     document.getElementById("actionMessage");
 
@@ -68,13 +106,13 @@ const clearLogButton =
 
 
 // =========================================================
-// GAME SETTINGS
+// SETUP STATE
 // =========================================================
 
-// Every active player automatically contributes ₱1
-// at the beginning of every hand.
+let setupPlayerCount = 4;
 
-const INITIAL_POT_BET = 1;
+const MIN_PLAYERS = 2;
+const MAX_PLAYERS = 8;
 
 
 // =========================================================
@@ -89,6 +127,8 @@ let game = {
 
     currentBet: 0,
 
+    ante: 1,
+
     handNumber: 1,
 
     potAwarded: false,
@@ -99,45 +139,186 @@ let game = {
 
 
 // =========================================================
-// CREATE PLAYER INPUTS
+// CREATE PLAYER SEATS
 // =========================================================
 
-function createPlayerInputs() {
+function createPlayerSeats() {
 
-    playerNames.innerHTML = "";
+    /*
+        Save names before rebuilding the seats so increasing
+        or decreasing the player count doesn't erase them.
+    */
 
-    const count =
-        Number(playerCount.value);
+    const oldInputs =
+        document.querySelectorAll(
+            ".player-name-input"
+        );
+
+    const oldNames =
+        [...oldInputs].map(
+            input => input.value
+        );
 
 
-    for (let i = 0; i < count; i++) {
+    /*
+        Remove only old player seats.
 
-        const label =
-            document.createElement("label");
+        The poker table background stays inside playerSeats.
+    */
 
-        label.textContent =
-            `Player ${i + 1} Name`;
+    document
+        .querySelectorAll(".player-seat")
+        .forEach(
+            seat => seat.remove()
+        );
+
+
+    for (
+        let i = 0;
+        i < setupPlayerCount;
+        i++
+    ) {
+
+        const seat =
+            document.createElement("div");
+
+
+        seat.className =
+            `player-seat seat-${i + 1}`;
 
 
         const input =
             document.createElement("input");
+
 
         input.type = "text";
 
         input.className =
             "player-name-input";
 
+
         input.placeholder =
             `Player ${i + 1}`;
 
-        input.value =
-            `Player ${i + 1}`;
+
+        input.maxLength = 20;
 
 
-        playerNames.appendChild(label);
+        if (oldNames[i]) {
 
-        playerNames.appendChild(input);
+            input.value =
+                oldNames[i];
+
+        } else {
+
+            input.value =
+                `Player ${i + 1}`;
+
+        }
+
+
+        seat.appendChild(input);
+
+        playerSeats.appendChild(seat);
+
     }
+
+
+    playerCountDisplay.textContent =
+        setupPlayerCount;
+
+
+    updatePlayerControlButtons();
+
+}
+
+
+// =========================================================
+// UPDATE PLAYER +/- BUTTONS
+// =========================================================
+
+function updatePlayerControlButtons() {
+
+    removePlayerButton.disabled =
+        setupPlayerCount <= MIN_PLAYERS;
+
+
+    addPlayerButton.disabled =
+        setupPlayerCount >= MAX_PLAYERS;
+
+}
+
+
+// =========================================================
+// ADD PLAYER
+// =========================================================
+
+function addPlayer() {
+
+    if (
+        setupPlayerCount >= MAX_PLAYERS
+    ) {
+
+        return;
+
+    }
+
+
+    setupPlayerCount++;
+
+    createPlayerSeats();
+
+}
+
+
+// =========================================================
+// REMOVE PLAYER
+// =========================================================
+
+function removePlayer() {
+
+    if (
+        setupPlayerCount <= MIN_PLAYERS
+    ) {
+
+        return;
+
+    }
+
+
+    setupPlayerCount--;
+
+    createPlayerSeats();
+
+}
+
+
+// =========================================================
+// RESET SETUP
+// =========================================================
+
+function resetSetup() {
+
+    const confirmed =
+        confirm(
+            "Reset the game setup?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    startingChips.value = 50;
+
+    anteAmount.value = 1;
+
+    setupPlayerCount = 4;
+
+    createPlayerSeats();
 
 }
 
@@ -152,6 +333,12 @@ function startGame() {
         Number(startingChips.value);
 
 
+    const ante =
+        Number(anteAmount.value);
+
+
+    // Validate starting chips
+
     if (
         !Number.isInteger(chips) ||
         chips <= 0
@@ -162,6 +349,34 @@ function startGame() {
         );
 
         return;
+
+    }
+
+
+    // Validate ante
+
+    if (
+        !Number.isInteger(ante) ||
+        ante < 0
+    ) {
+
+        alert(
+            "Please enter a valid ante amount."
+        );
+
+        return;
+
+    }
+
+
+    if (ante > chips) {
+
+        alert(
+            "The ante cannot be greater than the starting chips."
+        );
+
+        return;
+
     }
 
 
@@ -178,6 +393,8 @@ function startGame() {
         pot: 0,
 
         currentBet: 0,
+
+        ante: ante,
 
         handNumber: 1,
 
@@ -229,12 +446,21 @@ function startGame() {
 
 
     addLog(
+        `Starting chips: ₱${chips} per player.`
+    );
+
+
+    addLog(
+        `Ante: ₱${game.ante} per hand.`
+    );
+
+
+    addLog(
         `Hand #${game.handNumber} started.`
     );
 
 
-    // Automatically collect ₱1 from every player
-    collectInitialPotBet();
+    collectAnte();
 
 
     saveGame();
@@ -242,49 +468,82 @@ function startGame() {
     showGame();
 
     updateGame();
+
 }
 
 
 // =========================================================
-// COLLECT INITIAL POT BET
+// COLLECT ANTE
 // =========================================================
 
-function collectInitialPotBet() {
+function collectAnte() {
 
-    let totalInitialPotBet = 0;
+    /*
+        Ante of 0 means nothing needs to be collected.
+    */
+
+    if (game.ante <= 0) {
+
+        addLog(
+            "No ante collected for this hand."
+        );
+
+        return;
+
+    }
+
+
+    let totalAnte = 0;
 
     let playersWhoPaid = 0;
 
 
-    game.players.forEach(player => {
+    game.players.forEach(
+        player => {
 
-        // Only players with chips participate
-        if (player.chips > 0) {
+            /*
+                Players with no chips cannot pay an ante.
+            */
 
-            const initialPotBet =
+            if (player.chips <= 0) {
+
+                return;
+
+            }
+
+
+            /*
+                Normally the player pays the full ante.
+
+                If they have fewer chips than the ante,
+                all remaining chips are contributed instead.
+            */
+
+            const payment =
                 Math.min(
-                    INITIAL_POT_BET,
+                    game.ante,
                     player.chips
                 );
 
 
-            player.chips -=
-                initialPotBet;
+            player.chips -= payment;
 
+            game.pot += payment;
 
-            game.pot +=
-                initialPotBet;
-
-
-            totalInitialPotBet +=
-                initialPotBet;
-
+            totalAnte += payment;
 
             playersWhoPaid++;
 
 
-            // If their final chip was used,
-            // they are automatically all-in.
+            /*
+                Ante does NOT count toward roundBet.
+
+                This is important because an ante is part
+                of the pot but is not a normal bet that
+                other players must match.
+            */
+
+
             if (player.chips === 0) {
 
                 player.allIn = true;
@@ -292,14 +551,13 @@ function collectInitialPotBet() {
             }
 
         }
-
-    });
+    );
 
 
     addLog(
-        `₱${INITIAL_POT_BET} Initial Pot Bet collected ` +
-        `from ${playersWhoPaid} players. ` +
-        `₱${totalInitialPotBet} added to the pot.`
+        `₱${game.ante} ante collected from ` +
+        `${playersWhoPaid} player(s). ` +
+        `₱${totalAnte} added to the pot.`
     );
 
 }
@@ -373,112 +631,110 @@ function renderPlayers() {
         Number(activePlayer.value);
 
 
-    game.players.forEach(player => {
+    game.players.forEach(
+        player => {
 
-        const card =
-            document.createElement("div");
-
-
-        card.className =
-            "player-card";
+            const card =
+                document.createElement("div");
 
 
-        if (
-            player.id === selectedId
-        ) {
-
-            card.classList.add(
-                "active"
-            );
-
-        }
+            card.className =
+                "player-card";
 
 
-        if (player.folded) {
+            if (
+                player.id === selectedId
+            ) {
 
-            card.classList.add(
-                "folded"
-            );
-
-        }
-
-
-        let status =
-            "Playing";
-
-
-        if (player.folded) {
-
-            status =
-                "Folded";
-
-        } else if (player.allIn) {
-
-            status =
-                "All-In";
-
-        } else if (player.chips === 0) {
-
-            status =
-                "Out";
-
-        }
-
-
-        card.innerHTML = `
-
-            <h3>
-                ${escapeHTML(player.name)}
-            </h3>
-
-            <p>
-                Chips:
-                <strong>
-                    ₱${player.chips}
-                </strong>
-            </p>
-
-            <p>
-                Current Bet:
-                <strong>
-                    ₱${player.roundBet}
-                </strong>
-            </p>
-
-            <span class="player-status">
-                ${status}
-            </span>
-
-        `;
-
-
-        card.addEventListener(
-            "click",
-            function () {
-
-                if (
-                    !player.folded &&
-                    !player.allIn &&
-                    player.chips > 0
-                ) {
-
-                    activePlayer.value =
-                        player.id;
-
-
-                    updateGame();
-
-                }
+                card.classList.add(
+                    "active"
+                );
 
             }
-        );
 
 
-        playersContainer.appendChild(
-            card
-        );
+            if (player.folded) {
 
-    });
+                card.classList.add(
+                    "folded"
+                );
+
+            }
+
+
+            let status = "Playing";
+
+
+            if (player.folded) {
+
+                status = "Folded";
+
+            } else if (player.allIn) {
+
+                status = "All-In";
+
+            } else if (player.chips === 0) {
+
+                status = "Out";
+
+            }
+
+
+            card.innerHTML = `
+
+                <h3>
+                    ${escapeHTML(player.name)}
+                </h3>
+
+                <p>
+                    Chips:
+                    <strong>
+                        ₱${player.chips}
+                    </strong>
+                </p>
+
+                <p>
+                    Current Bet:
+                    <strong>
+                        ₱${player.roundBet}
+                    </strong>
+                </p>
+
+                <span class="player-status">
+                    ${status}
+                </span>
+
+            `;
+
+
+            card.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        !player.folded &&
+                        !player.allIn &&
+                        player.chips > 0
+                    ) {
+
+                        activePlayer.value =
+                            player.id;
+
+
+                        updateGame();
+
+                    }
+
+                }
+            );
+
+
+            playersContainer.appendChild(
+                card
+            );
+
+        }
+    );
 
 }
 
@@ -495,6 +751,10 @@ function updateGameInfo() {
 
     currentBetDisplay.textContent =
         `₱${game.currentBet}`;
+
+
+    handDisplay.textContent =
+        `Hand #${game.handNumber} • Ante ₱${game.ante}`;
 
 
     const remainingPlayers =
@@ -515,7 +775,7 @@ function updateGameInfo() {
 
 
 // =========================================================
-// UPDATE PLAYER SELECT
+// UPDATE ACTIVE PLAYER SELECT
 // =========================================================
 
 function updatePlayerSelect() {
@@ -527,35 +787,37 @@ function updatePlayerSelect() {
     activePlayer.innerHTML = "";
 
 
-    game.players.forEach(player => {
+    game.players.forEach(
+        player => {
 
-        if (
-            !player.folded &&
-            !player.allIn &&
-            player.chips > 0
-        ) {
+            if (
+                !player.folded &&
+                !player.allIn &&
+                player.chips > 0
+            ) {
 
-            const option =
-                document.createElement(
-                    "option"
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    player.id;
+
+
+                option.textContent =
+                    `${player.name} - ₱${player.chips}`;
+
+
+                activePlayer.appendChild(
+                    option
                 );
 
-
-            option.value =
-                player.id;
-
-
-            option.textContent =
-                `${player.name} - ₱${player.chips}`;
-
-
-            activePlayer.appendChild(
-                option
-            );
+            }
 
         }
-
-    });
+    );
 
 
     const stillExists =
@@ -590,31 +852,33 @@ function updateWinnerSelect() {
     winnerSelect.innerHTML = "";
 
 
-    game.players.forEach(player => {
+    game.players.forEach(
+        player => {
 
-        if (!player.folded) {
+            if (!player.folded) {
 
-            const option =
-                document.createElement(
-                    "option"
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    player.id;
+
+
+                option.textContent =
+                    player.name;
+
+
+                winnerSelect.appendChild(
+                    option
                 );
 
-
-            option.value =
-                player.id;
-
-
-            option.textContent =
-                player.name;
-
-
-            winnerSelect.appendChild(
-                option
-            );
+            }
 
         }
-
-    });
+    );
 
 
     const stillExists =
@@ -738,10 +1002,7 @@ function bet() {
     }
 
 
-    if (
-        amount >
-        player.chips
-    ) {
+    if (amount > player.chips) {
 
         alert(
             `${player.name} does not have enough chips.`
@@ -752,28 +1013,19 @@ function bet() {
     }
 
 
-    player.chips -=
-        amount;
+    player.chips -= amount;
 
+    player.roundBet += amount;
 
-    player.roundBet +=
-        amount;
-
-
-    game.pot +=
-        amount;
-
+    game.pot += amount;
 
     game.currentBet =
         player.roundBet;
 
 
-    if (
-        player.chips === 0
-    ) {
+    if (player.chips === 0) {
 
-        player.allIn =
-            true;
+        player.allIn = true;
 
     }
 
@@ -784,7 +1036,6 @@ function bet() {
 
 
     betAmount.value = "";
-
 
     updateGame();
 
@@ -813,9 +1064,7 @@ function call() {
         player.roundBet;
 
 
-    if (
-        amountNeeded <= 0
-    ) {
+    if (amountNeeded <= 0) {
 
         alert(
             `${player.name} has already matched the current bet.`
@@ -833,24 +1082,16 @@ function call() {
         );
 
 
-    player.chips -=
-        actualCall;
+    player.chips -= actualCall;
+
+    player.roundBet += actualCall;
+
+    game.pot += actualCall;
 
 
-    player.roundBet +=
-        actualCall;
+    if (player.chips === 0) {
 
-
-    game.pot +=
-        actualCall;
-
-
-    if (
-        player.chips === 0
-    ) {
-
-        player.allIn =
-            true;
+        player.allIn = true;
 
 
         addLog(
@@ -882,9 +1123,7 @@ function raiseBet() {
 
 
     const raiseAmount =
-        Number(
-            betAmount.value
-        );
+        Number(betAmount.value);
 
 
     if (!player) {
@@ -894,9 +1133,7 @@ function raiseBet() {
     }
 
 
-    if (
-        game.currentBet === 0
-    ) {
+    if (game.currentBet === 0) {
 
         alert(
             "There is no existing bet. Use Bet instead."
@@ -907,11 +1144,7 @@ function raiseBet() {
     }
 
 
-    if (
-        !validAmount(
-            raiseAmount
-        )
-    ) {
+    if (!validAmount(raiseAmount)) {
 
         return;
 
@@ -931,10 +1164,7 @@ function raiseBet() {
         raiseAmount;
 
 
-    if (
-        totalRequired >
-        player.chips
-    ) {
+    if (totalRequired > player.chips) {
 
         alert(
             `${player.name} does not have enough chips to make this raise.`
@@ -945,28 +1175,19 @@ function raiseBet() {
     }
 
 
-    player.chips -=
-        totalRequired;
+    player.chips -= totalRequired;
 
+    player.roundBet += totalRequired;
 
-    player.roundBet +=
-        totalRequired;
-
-
-    game.pot +=
-        totalRequired;
-
+    game.pot += totalRequired;
 
     game.currentBet =
         player.roundBet;
 
 
-    if (
-        player.chips === 0
-    ) {
+    if (player.chips === 0) {
 
-        player.allIn =
-            true;
+        player.allIn = true;
 
     }
 
@@ -978,7 +1199,6 @@ function raiseBet() {
 
 
     betAmount.value = "";
-
 
     updateGame();
 
@@ -1002,9 +1222,7 @@ function allIn() {
     }
 
 
-    if (
-        player.chips <= 0
-    ) {
+    if (player.chips <= 0) {
 
         return;
 
@@ -1017,17 +1235,11 @@ function allIn() {
 
     player.chips = 0;
 
+    player.roundBet += amount;
 
-    player.roundBet +=
-        amount;
+    game.pot += amount;
 
-
-    game.pot +=
-        amount;
-
-
-    player.allIn =
-        true;
+    player.allIn = true;
 
 
     if (
@@ -1075,8 +1287,7 @@ function fold() {
     }
 
 
-    player.folded =
-        true;
+    player.folded = true;
 
 
     addLog(
@@ -1090,13 +1301,15 @@ function fold() {
     const remaining =
         game.players.filter(
             player =>
-                !player.folded
+                !player.folded &&
+                (
+                    player.chips > 0 ||
+                    player.allIn
+                )
         );
 
 
-    if (
-        remaining.length === 1
-    ) {
+    if (remaining.length === 1) {
 
         actionMessage.textContent =
             `${remaining[0].name} is the only remaining player. ` +
@@ -1113,9 +1326,7 @@ function fold() {
 
 function awardPot() {
 
-    if (
-        game.pot <= 0
-    ) {
+    if (game.pot <= 0) {
 
         alert(
             "There are no chips in the pot."
@@ -1126,9 +1337,7 @@ function awardPot() {
     }
 
 
-    if (
-        game.potAwarded
-    ) {
+    if (game.potAwarded) {
 
         alert(
             "The pot has already been awarded."
@@ -1164,15 +1373,11 @@ function awardPot() {
         game.pot;
 
 
-    winner.chips +=
-        winnings;
-
+    winner.chips += winnings;
 
     game.pot = 0;
 
-
-    game.potAwarded =
-        true;
+    game.potAwarded = true;
 
 
     addLog(
@@ -1215,15 +1420,11 @@ function nextHand() {
 
     game.handNumber++;
 
-
     game.pot = 0;
-
 
     game.currentBet = 0;
 
-
-    game.potAwarded =
-        false;
+    game.potAwarded = false;
 
 
     game.players.forEach(
@@ -1244,8 +1445,12 @@ function nextHand() {
     );
 
 
-    // Automatically collect the Initial Pot Bet
-    collectInitialPotBet();
+    /*
+        Automatically collect the configured ante
+        at the beginning of the new hand.
+    */
+
+    collectAnte();
 
 
     updateGame();
@@ -1278,9 +1483,7 @@ function updateActionMessage() {
         player.roundBet;
 
 
-    if (
-        amountNeeded > 0
-    ) {
+    if (amountNeeded > 0) {
 
         actionMessage.textContent =
             `${player.name} needs ₱${amountNeeded} to call.`;
@@ -1295,7 +1498,8 @@ function updateActionMessage() {
     } else {
 
         actionMessage.textContent =
-            `${player.name} has matched the current bet and may check or raise.`;
+            `${player.name} has matched the current bet ` +
+            `and may check or raise.`;
 
     }
 
@@ -1315,27 +1519,23 @@ function updateActionButtons() {
     const buttons = [
 
         checkButton,
-
         callButton,
-
         betButton,
-
         raiseButton,
-
         allInButton,
-
         foldButton
 
     ];
 
 
-    // Disable all buttons first
+    /*
+        Disable everything first.
+    */
+
     buttons.forEach(
         button => {
 
-            button.disabled =
-                true;
-
+            button.disabled = true;
 
             button.classList.remove(
                 "available"
@@ -1368,98 +1568,57 @@ function updateActionButtons() {
         player.roundBet;
 
 
-    // ---------------------------------
+    // =====================================
     // NO CURRENT BET
-    // ---------------------------------
+    // =====================================
 
-    if (
-        game.currentBet === 0
-    ) {
+    if (game.currentBet === 0) {
 
-        enableAction(
-            checkButton
-        );
+        enableAction(checkButton);
 
+        enableAction(betButton);
 
-        enableAction(
-            betButton
-        );
+        enableAction(allInButton);
 
-
-        enableAction(
-            allInButton
-        );
-
-
-        enableAction(
-            foldButton
-        );
-
+        enableAction(foldButton);
 
         return;
 
     }
 
 
-    // ---------------------------------
-    // PLAYER NEEDS TO CALL
-    // ---------------------------------
+    // =====================================
+    // PLAYER MUST CALL
+    // =====================================
 
-    if (
-        amountToCall > 0
-    ) {
+    if (amountToCall > 0) {
 
-        enableAction(
-            callButton
-        );
+        enableAction(callButton);
 
+        enableAction(raiseButton);
 
-        enableAction(
-            raiseButton
-        );
+        enableAction(allInButton);
 
-
-        enableAction(
-            allInButton
-        );
-
-
-        enableAction(
-            foldButton
-        );
-
+        enableAction(foldButton);
 
         return;
 
     }
 
 
-    // ---------------------------------
-    // PLAYER MATCHED CURRENT BET
-    // ---------------------------------
+    // =====================================
+    // PLAYER MATCHED BET
+    // =====================================
 
-    if (
-        amountToCall === 0
-    ) {
+    if (amountToCall === 0) {
 
-        enableAction(
-            checkButton
-        );
+        enableAction(checkButton);
 
+        enableAction(raiseButton);
 
-        enableAction(
-            raiseButton
-        );
+        enableAction(allInButton);
 
-
-        enableAction(
-            allInButton
-        );
-
-
-        enableAction(
-            foldButton
-        );
+        enableAction(foldButton);
 
     }
 
@@ -1467,14 +1626,12 @@ function updateActionButtons() {
 
 
 // =========================================================
-// ENABLE ACTION BUTTON
+// ENABLE ACTION
 // =========================================================
 
 function enableAction(button) {
 
-    button.disabled =
-        false;
-
+    button.disabled = false;
 
     button.classList.add(
         "available"
@@ -1494,9 +1651,7 @@ function addLog(message) {
     );
 
 
-    if (
-        game.log.length > 100
-    ) {
+    if (game.log.length > 100) {
 
         game.log.pop();
 
@@ -1576,8 +1731,22 @@ function loadGame() {
             JSON.parse(saved);
 
 
-        showGame();
+        /*
+            Compatibility with an older saved game
+            that did not have an ante property.
+        */
 
+        if (
+            !Number.isInteger(game.ante) ||
+            game.ante < 0
+        ) {
+
+            game.ante = 1;
+
+        }
+
+
+        showGame();
 
         updateGame();
 
@@ -1673,9 +1842,21 @@ function escapeHTML(text) {
 // EVENT LISTENERS
 // =========================================================
 
-playerCount.addEventListener(
-    "change",
-    createPlayerInputs
+addPlayerButton.addEventListener(
+    "click",
+    addPlayer
+);
+
+
+removePlayerButton.addEventListener(
+    "click",
+    removePlayer
+);
+
+
+resetSetupButton.addEventListener(
+    "click",
+    resetSetup
 );
 
 
@@ -1751,7 +1932,6 @@ clearLogButton.addEventListener(
 
         game.log = [];
 
-
         updateGame();
 
     }
@@ -1759,10 +1939,11 @@ clearLogButton.addEventListener(
 
 
 // =========================================================
-// INITIALIZE WEBSITE
+// INITIALIZE
 // =========================================================
 
-createPlayerInputs();
+createPlayerSeats();
+
 
 const savedGame =
     localStorage.getItem(
