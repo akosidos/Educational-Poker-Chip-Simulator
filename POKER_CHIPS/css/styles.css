@@ -1,12 +1,18 @@
+/* ========================================================= */
+/* GLOBAL */
+/* ========================================================= */
+
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+
 html {
     scroll-behavior: smooth;
 }
+
 
 body {
     min-height: 100vh;
@@ -20,30 +26,36 @@ body {
     color: #ffffff;
 }
 
+
 button,
 input,
 select {
     font-family: inherit;
 }
 
+
 button {
     cursor: pointer;
 }
+
 
 .hidden {
     display: none !important;
 }
 
 
-/* ======================================== */
+
+/* ========================================================= */
 /* SETUP HEADER */
-/* ======================================== */
+/* ========================================================= */
 
 .setup-header {
     height: 100px;
 
     display: grid;
-    grid-template-columns: 60px 1fr 60px;
+
+    grid-template-columns:
+        60px 1fr 60px;
 
     align-items: center;
 
@@ -51,8 +63,10 @@ button {
 
     background-color: #19262c;
 
-    border-bottom: 3px solid #223139;
+    border-bottom:
+        3px solid #223139;
 }
+
 
 .setup-header h1 {
     text-align: center;
@@ -60,16 +74,18 @@ button {
     font-size: 36px;
 }
 
+
 .circle-button {
     width: 52px;
     height: 52px;
 
+    border:
+        2px solid #344850;
+
     border-radius: 50%;
 
-    border: 2px solid #344850;
-
     background-color: #101b20;
-    color: white;
+    color: #ffffff;
 
     font-size: 32px;
 
@@ -78,6 +94,7 @@ button {
         transform 0.3s ease;
 }
 
+
 .circle-button:hover {
     background-color: #24363e;
 
@@ -85,34 +102,44 @@ button {
 }
 
 
-/* ======================================== */
-/* SETUP */
-/* ======================================== */
+
+/* ========================================================= */
+/* SETUP SECTIONS */
+/* ========================================================= */
 
 .setup-section {
     padding: 35px 20px;
 
     text-align: center;
 
-    border-bottom: 4px solid #17252b;
+    border-bottom:
+        4px solid #17252b;
 }
 
+
 .setup-section h2 {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 
     font-size: 30px;
 }
 
+
 .setup-description {
-    margin-bottom: 20px;
+    max-width: 450px;
+
+    margin:
+        0 auto 22px;
 
     color: #8fa0a8;
+
+    line-height: 1.5;
 }
 
 
-/* ======================================== */
+
+/* ========================================================= */
 /* ANTE */
-/* ======================================== */
+/* ========================================================= */
 
 .ante-box {
     width: 180px;
@@ -126,17 +153,19 @@ button {
 
     border-radius: 12px;
 
-    background-color: white;
+    background-color: #ffffff;
 }
+
 
 .ante-box span {
     padding-left: 18px;
 
-    color: #111;
+    color: #111111;
 
     font-size: 25px;
     font-weight: bold;
 }
+
 
 .ante-box input {
     width: 100%;
@@ -146,8 +175,8 @@ button {
     border: none;
     outline: none;
 
-    background-color: white;
-    color: #111;
+    background-color: #ffffff;
+    color: #111111;
 
     text-align: center;
 
@@ -156,28 +185,31 @@ button {
 }
 
 
-/* ======================================== */
-/* PLAYER TABLE */
-/* ======================================== */
+
+/* ========================================================= */
+/* SETUP POKER TABLE */
+/* ========================================================= */
 
 .players-section {
-    min-height: 590px;
+    min-height: 600px;
 }
 
-.poker-table {
+
+.setup-poker-table {
     width: 100%;
     max-width: 650px;
 
     height: 430px;
 
-    margin: auto;
-
     position: relative;
+
+    margin: 0 auto;
 }
 
-.table-felt {
+
+.setup-table-felt {
     width: 230px;
-    height: 370px;
+    height: 360px;
 
     position: absolute;
 
@@ -187,18 +219,20 @@ button {
     transform:
         translate(-50%, -50%);
 
+    border:
+        9px solid #50342b;
+
     border-radius: 120px;
 
     background-color: #12582d;
-
-    border: 9px solid #50342b;
 
     box-shadow:
         inset 0 0 0 4px #25431f,
         0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
-.inner-table {
+
+.setup-inner-table {
     width: 160px;
     height: 270px;
 
@@ -210,24 +244,41 @@ button {
     transform:
         translate(-50%, -50%);
 
-    border-radius: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     border:
-        4px solid
-        rgba(20, 110, 55, 0.5);
+        4px solid rgba(20, 110, 55, 0.5);
+
+    border-radius: 90px;
 }
 
 
-/* ======================================== */
-/* PLAYER SEATS */
-/* ======================================== */
+.setup-inner-table span {
+    color:
+        rgba(255, 255, 255, 0.12);
 
-.player-seat {
+    font-size: 25px;
+    font-weight: bold;
+
+    letter-spacing: 4px;
+}
+
+
+
+/* ========================================================= */
+/* SETUP PLAYER SEATS */
+/* ========================================================= */
+
+.setup-player-seat {
     width: 145px;
 
     position: absolute;
 
-    padding: 14px;
+    z-index: 5;
+
+    padding: 13px;
 
     border-radius: 11px;
 
@@ -239,128 +290,190 @@ button {
 
     box-shadow:
         0 6px 0 #174cb5;
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
 }
 
-.player-seat input {
+
+.setup-player-seat:hover {
+    filter: brightness(1.08);
+}
+
+
+.setup-player-seat input {
     width: 100%;
 
     border: none;
     outline: none;
 
-    background: transparent;
-
-    color: white;
+    background-color: transparent;
+    color: #ffffff;
 
     text-align: center;
 
-    font-size: 18px;
+    font-size: 17px;
     font-weight: bold;
 }
 
-.player-seat input::placeholder {
-    color: #dce9ff;
+
+.setup-player-seat input::placeholder {
+    color:
+        rgba(255, 255, 255, 0.75);
 }
 
 
-/* SEAT POSITIONS */
 
-.seat-1 {
+/* ========================================================= */
+/* SETUP SEAT POSITIONS */
+/* ========================================================= */
+
+.setup-seat-1 {
     top: 0;
     left: 50%;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 }
 
-.seat-2 {
+
+.setup-seat-2 {
     top: 90px;
     right: 0;
 }
 
-.seat-3 {
+
+.setup-seat-3 {
     bottom: 90px;
     right: 0;
 }
 
-.seat-4 {
+
+.setup-seat-4 {
     bottom: 0;
     left: 50%;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 }
 
-.seat-5 {
+
+.setup-seat-5 {
     bottom: 90px;
     left: 0;
 }
 
-.seat-6 {
+
+.setup-seat-6 {
     top: 90px;
     left: 0;
 }
 
-.seat-7 {
+
+.setup-seat-7 {
     top: 50%;
-    right: -10px;
+    right: -5px;
 
-    transform: translateY(-50%);
-}
-
-.seat-8 {
-    top: 50%;
-    left: -10px;
-
-    transform: translateY(-50%);
+    transform:
+        translateY(-50%);
 }
 
 
-/* ======================================== */
-/* PLAYER CONTROLS */
-/* ======================================== */
+.setup-seat-8 {
+    top: 50%;
+    left: -5px;
 
-.player-controls {
+    transform:
+        translateY(-50%);
+}
+
+
+
+/* ========================================================= */
+/* PLAYER COUNT */
+/* ========================================================= */
+
+.player-count-controls {
     display: flex;
 
     justify-content: center;
     align-items: center;
 
-    gap: 20px;
+    gap: 22px;
 
     margin-top: 20px;
 }
 
-.player-controls button {
+
+.player-count-controls button {
     width: 50px;
     height: 50px;
 
     border: none;
+
     border-radius: 10px;
 
     background-color: #307af6;
-    color: white;
+    color: #ffffff;
 
     font-size: 28px;
 
     transition:
+        background-color 0.3s ease,
         transform 0.2s ease,
-        background-color 0.3s ease;
+        opacity 0.3s ease;
 }
 
-.player-controls button:hover {
+
+.player-count-controls button:hover:not(:disabled) {
     background-color: #4990ff;
 
-    transform: translateY(-2px);
+    transform:
+        translateY(-2px);
 }
 
-.player-controls button:disabled {
-    opacity: 0.3;
+
+.player-count-controls button:disabled {
+    opacity: 0.25;
 
     cursor: not-allowed;
 }
 
 
-/* ======================================== */
-/* START */
-/* ======================================== */
+.player-count-display {
+    min-width: 100px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.player-count-display strong {
+    font-size: 24px;
+}
+
+
+.player-count-display span {
+    color: #8fa0a8;
+
+    font-size: 13px;
+}
+
+
+.player-limit {
+    margin-top: 13px;
+
+    color: #667a83;
+
+    font-size: 12px;
+}
+
+
+
+/* ========================================================= */
+/* START BUTTON */
+/* ========================================================= */
 
 .start-button {
     width: 100%;
@@ -370,7 +483,7 @@ button {
     border: none;
 
     background-color: #18c85c;
-    color: white;
+    color: #ffffff;
 
     font-size: 30px;
     font-weight: bold;
@@ -379,14 +492,16 @@ button {
         background-color 0.3s ease;
 }
 
+
 .start-button:hover {
     background-color: #20db68;
 }
 
 
-/* ======================================== */
+
+/* ========================================================= */
 /* GAME HEADER */
-/* ======================================== */
+/* ========================================================= */
 
 .game-header {
     display: flex;
@@ -394,22 +509,28 @@ button {
     align-items: center;
     justify-content: space-between;
 
+    gap: 20px;
+
     padding: 25px 6%;
 
     background-color: #19262c;
 
-    border-bottom: 3px solid #223139;
+    border-bottom:
+        3px solid #223139;
 }
+
 
 .game-header h1 {
     font-size: 25px;
 }
+
 
 .game-header p {
     margin-top: 5px;
 
     color: #8fa0a8;
 }
+
 
 .end-game-button {
     padding: 11px 18px;
@@ -420,35 +541,44 @@ button {
     border-radius: 8px;
 
     background-color: #5b2929;
-    color: white;
+    color: #ffffff;
+
+    font-weight: bold;
 
     transition:
         background-color 0.3s ease,
         transform 0.2s ease;
 }
 
+
 .end-game-button:hover {
     background-color: #773636;
 
-    transform: translateY(-2px);
+    transform:
+        translateY(-2px);
 }
 
 
-/* ======================================== */
+
+/* ========================================================= */
 /* STAGE */
-/* ======================================== */
+/* ========================================================= */
 
 .stage-section {
-    padding: 25px;
+    padding: 25px 20px 15px;
 
     text-align: center;
 }
 
+
 .stage-section span {
     color: #8fa0a8;
 
-    font-size: 13px;
+    font-size: 12px;
+
+    letter-spacing: 1px;
 }
+
 
 .stage-section h2 {
     margin-top: 5px;
@@ -459,15 +589,16 @@ button {
 }
 
 
-/* ======================================== */
-/* INFO */
-/* ======================================== */
+
+/* ========================================================= */
+/* GAME INFO */
+/* ========================================================= */
 
 .game-info {
     width: 100%;
     max-width: 1000px;
 
-    margin: 0 auto 25px;
+    margin: 0 auto 15px;
 
     padding: 0 20px;
 
@@ -479,8 +610,9 @@ button {
     gap: 15px;
 }
 
+
 .info-card {
-    padding: 22px;
+    padding: 20px;
 
     border:
         1px solid #2e444d;
@@ -492,30 +624,404 @@ button {
     text-align: center;
 }
 
+
 .info-card span {
     display: block;
 
     margin-bottom: 8px;
 
     color: #8fa0a8;
+
+    font-size: 13px;
 }
+
 
 .info-card strong {
     color: #35d77d;
 
-    font-size: 28px;
+    font-size: 27px;
 }
 
 
-/* ======================================== */
-/* ROUND COMPLETE MESSAGE */
-/* ======================================== */
+
+/* ========================================================= */
+/* GAME TABLE */
+/* ========================================================= */
+
+.game-table-section {
+    width: 100%;
+
+    padding:
+        30px 20px 45px;
+
+    overflow: hidden;
+}
+
+
+.game-poker-table {
+    width: 100%;
+    max-width: 760px;
+
+    height: 600px;
+
+    position: relative;
+
+    margin: 0 auto;
+}
+
+
+.game-table-felt {
+    width: 330px;
+    height: 500px;
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        11px solid #53382e;
+
+    border-radius: 180px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #176a38,
+            #10542d
+        );
+
+    box-shadow:
+        inset 0 0 0 5px #70483a,
+        inset 0 0 35px rgba(0, 0, 0, 0.25),
+        0 15px 35px rgba(0, 0, 0, 0.35);
+}
+
+
+.game-inner-table {
+    width: 235px;
+    height: 385px;
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        4px solid rgba(23, 125, 63, 0.55);
+
+    border-radius: 130px;
+}
+
+
+
+/* ========================================================= */
+/* TABLE CENTER */
+/* ========================================================= */
+
+.table-center-info {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 15px 22px;
+
+    border-radius: 14px;
+
+    background-color:
+        rgba(6, 35, 20, 0.55);
+
+    text-align: center;
+}
+
+
+.table-center-info span {
+    color: #a6c4b0;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+}
+
+
+.table-center-info strong {
+    color: #ffffff;
+
+    font-size: 30px;
+}
+
+
+.table-center-info small {
+    color: #73e89d;
+
+    font-size: 13px;
+}
+
+
+
+/* ========================================================= */
+/* GAME PLAYER SEATS */
+/* ========================================================= */
+
+.game-player-seat {
+    width: 170px;
+
+    position: absolute;
+
+    z-index: 5;
+
+    padding: 13px 12px;
+
+    border:
+        2px solid #344a54;
+
+    border-radius: 12px;
+
+    background-color: #19262c;
+
+    text-align: center;
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        background-color 0.25s ease,
+        opacity 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.game-player-seat h3 {
+    margin-bottom: 7px;
+
+    overflow: hidden;
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.seat-bet {
+    color: #9cacb3;
+
+    font-size: 13px;
+}
+
+
+.seat-bet strong {
+    color: #ffffff;
+}
+
+
+.seat-total {
+    margin-top: 4px;
+
+    color: #778b94;
+
+    font-size: 11px;
+}
+
+
+.player-seat-status {
+    display: inline-block;
+
+    margin-top: 7px;
+
+    padding: 4px 9px;
+
+    border-radius: 20px;
+
+    background-color: #25363e;
+    color: #9aacb4;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.5px;
+}
+
+
+
+/* ========================================================= */
+/* CURRENT TURN */
+/* ========================================================= */
+
+.game-player-seat.active {
+    z-index: 10;
+
+    border-color: #3485ff;
+
+    background-color: #1d3850;
+
+    box-shadow:
+        0 0 0 5px rgba(52, 133, 255, 0.18),
+        0 0 25px rgba(52, 133, 255, 0.28);
+}
+
+
+.game-player-seat.active
+.player-seat-status {
+    background-color: #307af6;
+    color: #ffffff;
+}
+
+
+.game-player-seat.active::before {
+    content: "YOUR TURN";
+
+    position: absolute;
+
+    top: -24px;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    padding: 4px 9px;
+
+    border-radius: 5px;
+
+    background-color: #307af6;
+    color: #ffffff;
+
+    font-size: 9px;
+    font-weight: bold;
+
+    white-space: nowrap;
+}
+
+
+
+/* ========================================================= */
+/* ACTED */
+/* ========================================================= */
+
+.game-player-seat.acted:not(.active) {
+    border-color: #31a764;
+}
+
+
+.game-player-seat.acted:not(.active)
+.player-seat-status {
+    color: #58d98c;
+}
+
+
+
+/* ========================================================= */
+/* FOLDED */
+/* ========================================================= */
+
+.game-player-seat.folded {
+    opacity: 0.3;
+
+    border-color: #566168;
+}
+
+
+.game-player-seat.folded h3 {
+    text-decoration: line-through;
+}
+
+
+
+/* ========================================================= */
+/* GAME SEAT POSITIONS */
+/* ========================================================= */
+
+.game-seat-1 {
+    top: 0;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+}
+
+
+.game-seat-2 {
+    top: 110px;
+    right: 0;
+}
+
+
+.game-seat-3 {
+    bottom: 110px;
+    right: 0;
+}
+
+
+.game-seat-4 {
+    bottom: 0;
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+}
+
+
+.game-seat-5 {
+    bottom: 110px;
+    left: 0;
+}
+
+
+.game-seat-6 {
+    top: 110px;
+    left: 0;
+}
+
+
+.game-seat-7 {
+    top: 50%;
+    right: -10px;
+
+    transform:
+        translateY(-50%);
+}
+
+
+.game-seat-8 {
+    top: 50%;
+    left: -10px;
+
+    transform:
+        translateY(-50%);
+}
+
+
+
+/* ========================================================= */
+/* ROUND COMPLETE */
+/* ========================================================= */
 
 .round-message {
     width: calc(100% - 40px);
     max-width: 700px;
 
-    margin: 20px auto;
+    margin:
+        0 auto 25px;
 
     padding: 25px;
 
@@ -529,9 +1035,9 @@ button {
     text-align: center;
 
     animation:
-        messageAppear
-        0.35s ease;
+        messageAppear 0.35s ease;
 }
+
 
 @keyframes messageAppear {
 
@@ -548,11 +1054,14 @@ button {
         transform:
             translateY(0);
     }
+
 }
+
 
 .round-message h2 {
     color: #62a3ff;
 }
+
 
 .round-message p {
     margin: 10px 0 20px;
@@ -560,14 +1069,16 @@ button {
     color: #b8c5cb;
 }
 
+
 .next-round-button {
     padding: 13px 30px;
 
     border: none;
+
     border-radius: 8px;
 
     background-color: #307af6;
-    color: white;
+    color: #ffffff;
 
     font-weight: bold;
 
@@ -576,97 +1087,19 @@ button {
         transform 0.2s ease;
 }
 
+
 .next-round-button:hover {
     background-color: #4990ff;
 
-    transform: translateY(-2px);
+    transform:
+        translateY(-2px);
 }
 
 
-/* ======================================== */
-/* PLAYERS */
-/* ======================================== */
 
-.players-container {
-    width: 100%;
-    max-width: 1000px;
-
-    margin: 0 auto 25px;
-
-    padding: 0 20px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fit, minmax(210px, 1fr));
-
-    gap: 15px;
-}
-
-.player-card {
-    padding: 20px;
-
-    border:
-        2px solid transparent;
-
-    border-radius: 12px;
-
-    background-color: #19262c;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        border-color 0.3s ease,
-        opacity 0.3s ease;
-}
-
-.player-card:hover {
-    transform: translateY(-3px);
-
-    border-color: #3b5661;
-}
-
-.player-card.active {
-    border-color: #307af6;
-}
-
-.player-card.folded {
-    opacity: 0.35;
-}
-
-.player-card.acted {
-    border-color: #35a66b;
-}
-
-.player-card h3 {
-    margin-bottom: 13px;
-}
-
-.player-card p {
-    margin: 7px 0;
-
-    color: #b9c5ca;
-}
-
-.player-status {
-    display: inline-block;
-
-    margin-top: 8px;
-
-    padding: 5px 9px;
-
-    border-radius: 20px;
-
-    background-color: #25363e;
-
-    font-size: 12px;
-}
-
-
-/* ======================================== */
-/* PANELS */
-/* ======================================== */
+/* ========================================================= */
+/* ACTION / WINNER / LOG PANELS */
+/* ========================================================= */
 
 .action-panel,
 .winner-panel,
@@ -686,6 +1119,7 @@ button {
     background-color: #19262c;
 }
 
+
 .action-panel h2,
 .winner-panel h2,
 .game-log-section h2 {
@@ -693,49 +1127,54 @@ button {
 }
 
 
-/* ======================================== */
-/* INPUTS */
-/* ======================================== */
 
-.action-player,
-.bet-input {
-    margin-bottom: 15px;
-}
+/* ========================================================= */
+/* CURRENT TURN BOX */
+/* ========================================================= */
 
-.action-player label,
-.bet-input label {
-    display: block;
+.current-turn-box {
+    margin-bottom: 18px;
 
-    margin-bottom: 7px;
-
-    color: #aab7bd;
-}
-
-.action-player select,
-.bet-input input,
-.winner-panel select {
-    width: 100%;
-
-    padding: 12px;
+    padding: 15px;
 
     border:
-        1px solid #3b515b;
+        1px solid #307af6;
 
-    border-radius: 8px;
+    border-radius: 9px;
 
-    outline: none;
+    background-color: #152a3a;
 
-    background-color: #0d171b;
-    color: white;
+    text-align: center;
 }
 
 
-/* ======================================== */
+.current-turn-box span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #7baeff;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+}
+
+
+.current-turn-box strong {
+    font-size: 22px;
+}
+
+
+
+/* ========================================================= */
 /* ACTION MESSAGE */
-/* ======================================== */
+/* ========================================================= */
 
 .action-message {
-    margin: 15px 0;
+    margin-bottom: 18px;
 
     padding: 13px;
 
@@ -744,12 +1183,72 @@ button {
     background-color: #0d171b;
 
     color: #b8c5cb;
+
+    text-align: center;
 }
 
 
-/* ======================================== */
+
+/* ========================================================= */
+/* BET INPUT */
+/* ========================================================= */
+
+.bet-input {
+    margin-bottom: 18px;
+}
+
+
+.bet-input label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #aab7bd;
+}
+
+
+.money-input {
+    display: flex;
+
+    align-items: center;
+
+    overflow: hidden;
+
+    border:
+        1px solid #3b515b;
+
+    border-radius: 8px;
+
+    background-color: #0d171b;
+}
+
+
+.money-input span {
+    padding-left: 13px;
+
+    color: #879aa3;
+}
+
+
+.money-input input {
+    width: 100%;
+
+    padding: 12px;
+
+    border: none;
+    outline: none;
+
+    background-color: transparent;
+    color: #ffffff;
+
+    font-size: 16px;
+}
+
+
+
+/* ========================================================= */
 /* ACTION BUTTONS */
-/* ======================================== */
+/* ========================================================= */
 
 .action-buttons {
     display: grid;
@@ -760,8 +1259,11 @@ button {
     gap: 10px;
 }
 
+
 .action-buttons button {
-    padding: 14px 8px;
+    min-height: 50px;
+
+    padding: 13px 8px;
 
     border:
         1px solid #3a4c54;
@@ -784,17 +1286,21 @@ button {
         opacity 0.3s ease;
 }
 
+
 .action-buttons button.available {
     opacity: 1;
 
     cursor: pointer;
 
-    color: white;
+    color: #ffffff;
 }
 
+
 .action-buttons button.available:hover {
-    transform: translateY(-3px);
+    transform:
+        translateY(-3px);
 }
+
 
 #checkButton.available {
     background-color: #24523a;
@@ -802,11 +1308,13 @@ button {
     border-color: #38ca7c;
 }
 
+
 #callButton.available {
     background-color: #24543a;
 
     border-color: #4bd68d;
 }
+
 
 #betButton.available {
     background-color: #244e69;
@@ -814,11 +1322,13 @@ button {
     border-color: #4595dd;
 }
 
+
 #raiseButton.available {
     background-color: #604a20;
 
     border-color: #d6aa4b;
 }
+
 
 #foldButton.available {
     background-color: #642f2f;
@@ -827,9 +1337,48 @@ button {
 }
 
 
-/* ======================================== */
-/* GENERAL BUTTONS */
-/* ======================================== */
+
+/* ========================================================= */
+/* WINNER */
+/* ========================================================= */
+
+.winner-panel p {
+    margin-bottom: 15px;
+
+    color: #aebbc1;
+}
+
+
+.winner-panel label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #aab7bd;
+}
+
+
+.winner-panel select {
+    width: 100%;
+
+    padding: 12px;
+
+    border:
+        1px solid #3b515b;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background-color: #0d171b;
+    color: #ffffff;
+}
+
+
+
+/* ========================================================= */
+/* BUTTONS */
+/* ========================================================= */
 
 .primary-button,
 .secondary-button {
@@ -843,14 +1392,28 @@ button {
 
     font-size: 16px;
     font-weight: bold;
+
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease;
 }
+
 
 .primary-button {
     border: none;
 
     background-color: #18c85c;
-    color: white;
+    color: #ffffff;
 }
+
+
+.primary-button:hover {
+    background-color: #20db68;
+
+    transform:
+        translateY(-2px);
+}
+
 
 .secondary-button {
     border:
@@ -861,19 +1424,37 @@ button {
 }
 
 
-/* ======================================== */
-/* LOG */
-/* ======================================== */
+
+/* ========================================================= */
+/* GAME LOG */
+/* ========================================================= */
 
 .section-title {
     display: flex;
 
     align-items: center;
     justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
 }
 
+
+.section-title h2 {
+    margin-bottom: 3px;
+}
+
+
+.section-title p {
+    color: #7f929b;
+
+    font-size: 12px;
+}
+
+
 .section-title button {
-    padding: 7px 12px;
+    padding: 8px 12px;
 
     border:
         1px solid #435860;
@@ -884,8 +1465,9 @@ button {
     color: #aebbc1;
 }
 
+
 .game-log {
-    max-height: 260px;
+    max-height: 300px;
 
     overflow-y: auto;
 
@@ -896,8 +1478,9 @@ button {
     background-color: #0d171b;
 }
 
+
 .log-entry {
-    padding: 9px 5px;
+    padding: 10px 5px;
 
     border-bottom:
         1px solid #26363d;
@@ -908,9 +1491,36 @@ button {
 }
 
 
-/* ======================================== */
+.log-entry:first-child {
+    color: #ffffff;
+}
+
+
+
+/* ========================================================= */
+/* FOOTER */
+/* ========================================================= */
+
+footer {
+    padding: 35px 20px;
+
+    color: #647981;
+
+    text-align: center;
+
+    font-size: 12px;
+}
+
+
+footer p {
+    margin: 4px;
+}
+
+
+
+/* ========================================================= */
 /* RESULTS */
-/* ======================================== */
+/* ========================================================= */
 
 .results-container {
     width: 100%;
@@ -923,20 +1533,23 @@ button {
     padding: 50px 20px;
 }
 
+
 .results-container > h1 {
     text-align: center;
 
     font-size: 38px;
 }
 
-.results-subtitle {
-    margin-top: 7px;
-    margin-bottom: 30px;
 
-    text-align: center;
+.results-subtitle {
+    margin:
+        7px 0 30px;
 
     color: #8799a1;
+
+    text-align: center;
 }
+
 
 .results-list {
     display: flex;
@@ -946,6 +1559,7 @@ button {
     gap: 12px;
 }
 
+
 .result-card {
     display: grid;
 
@@ -953,6 +1567,8 @@ button {
         1fr auto;
 
     align-items: center;
+
+    gap: 15px;
 
     padding: 20px;
 
@@ -964,9 +1580,11 @@ button {
     background-color: #19262c;
 }
 
+
 .result-card h3 {
-    margin-bottom: 6px;
+    margin-bottom: 7px;
 }
+
 
 .result-details {
     color: #84959d;
@@ -974,86 +1592,321 @@ button {
     font-size: 13px;
 }
 
+
 .result-net {
     font-size: 26px;
 
     font-weight: bold;
 }
 
+
 .result-net.win {
     color: #35d77d;
 }
+
 
 .result-net.loss {
     color: #ff6969;
 }
 
+
 .result-net.even {
     color: #aab8be;
 }
+
+
+.results-balance {
+    margin-top: 20px;
+
+    padding: 15px;
+
+    border:
+        1px solid #2c414a;
+
+    border-radius: 10px;
+
+    background-color: #19262c;
+
+    color: #9aabb2;
+
+    text-align: center;
+}
+
+
+.results-balance.balanced {
+    color: #35d77d;
+}
+
+
+.results-balance.unbalanced {
+    color: #ffb65c;
+}
+
 
 .results-actions {
     margin-top: 25px;
 }
 
 
-/* ======================================== */
-/* MOBILE */
-/* ======================================== */
+
+/* ========================================================= */
+/* TABLET / MOBILE */
+/* ========================================================= */
 
 @media (max-width: 700px) {
 
     .game-info {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
+
 
     .action-buttons {
         grid-template-columns:
             repeat(2, 1fr);
     }
 
-    .poker-table {
-        max-width: 430px;
+
+    .setup-poker-table {
+        max-width: 440px;
+
+        height: 420px;
     }
 
-    .table-felt {
+
+    .setup-table-felt {
         width: 175px;
-        height: 340px;
+        height: 330px;
     }
 
-    .player-seat {
+
+    .setup-player-seat {
         width: 120px;
+
+        padding: 10px 7px;
     }
 
-    .player-seat input {
-        font-size: 15px;
+
+    .setup-player-seat input {
+        font-size: 14px;
+    }
+
+
+    .setup-seat-2,
+    .setup-seat-6 {
+        top: 80px;
+    }
+
+
+    .setup-seat-3,
+    .setup-seat-5 {
+        bottom: 80px;
+    }
+
+
+    .game-poker-table {
+        max-width: 450px;
+
+        height: 530px;
+    }
+
+
+    .game-table-felt {
+        width: 210px;
+        height: 410px;
+
+        border-width: 8px;
+    }
+
+
+    .game-inner-table {
+        width: 155px;
+        height: 315px;
+    }
+
+
+    .game-player-seat {
+        width: 125px;
+
+        padding: 10px 7px;
+    }
+
+
+    .game-player-seat h3 {
+        font-size: 14px;
+    }
+
+
+    .seat-bet {
+        font-size: 11px;
+    }
+
+
+    .seat-total {
+        font-size: 9px;
+    }
+
+
+    .game-seat-2,
+    .game-seat-6 {
+        top: 90px;
+    }
+
+
+    .game-seat-3,
+    .game-seat-5 {
+        bottom: 90px;
     }
 
 }
 
 
-@media (max-width: 450px) {
+
+/* ========================================================= */
+/* SMALL MOBILE */
+/* ========================================================= */
+
+@media (max-width: 430px) {
+
+    .setup-header {
+        height: 85px;
+    }
+
+
+    .setup-header h1 {
+        font-size: 28px;
+    }
+
+
+    .circle-button {
+        width: 45px;
+        height: 45px;
+
+        font-size: 27px;
+    }
+
+
+    .setup-section {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+
+    .setup-poker-table {
+        height: 400px;
+    }
+
+
+    .setup-table-felt {
+        width: 150px;
+        height: 310px;
+    }
+
+
+    .setup-player-seat {
+        width: 100px;
+
+        padding: 9px 4px;
+    }
+
+
+    .setup-player-seat input {
+        font-size: 12px;
+    }
+
 
     .game-header {
+        padding: 18px;
+
         gap: 10px;
+    }
+
+
+    .game-header h1 {
+        font-size: 17px;
+    }
+
+
+    .end-game-button {
+        padding: 9px 10px;
+
+        font-size: 11px;
+    }
+
+
+    .game-table-section {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+
+    .game-poker-table {
+        height: 500px;
+    }
+
+
+    .game-table-felt {
+        width: 170px;
+        height: 380px;
+    }
+
+
+    .game-inner-table {
+        width: 125px;
+        height: 285px;
+    }
+
+
+    .game-player-seat {
+        width: 105px;
+
+        padding: 9px 5px;
+    }
+
+
+    .game-player-seat h3 {
+        font-size: 13px;
+    }
+
+
+    .table-center-info {
+        padding: 11px 14px;
+    }
+
+
+    .table-center-info strong {
+        font-size: 23px;
+    }
+
+
+    .game-seat-2,
+    .game-seat-3 {
+        right: -3px;
+    }
+
+
+    .game-seat-5,
+    .game-seat-6 {
+        left: -3px;
+    }
+
+
+    .action-panel,
+    .winner-panel,
+    .game-log-section {
+        width: calc(100% - 20px);
 
         padding: 18px;
     }
 
-    .game-header h1 {
-        font-size: 18px;
+
+    .result-card {
+        padding: 15px;
     }
 
-    .end-game-button {
-        padding: 9px 11px;
 
-        font-size: 12px;
-    }
-
-    .player-seat {
-        width: 105px;
-
-        padding: 11px 6px;
+    .result-net {
+        font-size: 21px;
     }
 
 }
